@@ -1,14 +1,18 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var app = express();
-// view engine setup
+import DBUtils from "./utils/db.utils";
+import { Columen } from "./model/columen";
 
-app.use(logger('dev'));
-app.use(express.json());
-// app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-
-module.exports = app;
+export default class service{
+    constructor(){}
+    public start(){
+      const db:DBUtils = new DBUtils();
+      const conn = db.getConnection();
+      conn.query("select * from INFORMATION_SCHEMA.Columns where table_name='sys_diary' and table_schema='note'",(x,y,z)=>{
+          const columns:Columen[] = y;
+         console.info(y);
+      });
+      conn.query("select table_name,table_comment from INFORMATION_SCHEMA.Tables where table_name='sys_diary' and table_schema='note'",(x,y,z)=>{
+        console.info(y);
+      })
+      conn.end();
+    } 
+}
