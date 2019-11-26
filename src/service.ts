@@ -1,5 +1,5 @@
 import DBUtils from "./utils/db.utils";
-import { Columen } from "./model/columen";
+import { Column } from "./model/column";
 import { plainToClass } from "class-transformer";
 import { FormatUtils } from "./utils/format.utils.ts";
 import { stringify } from "querystring";
@@ -11,7 +11,7 @@ export default class service{
       conn.query("select * from INFORMATION_SCHEMA.Columns where table_name='sys_diary' and table_schema='note'",(error,data,fieldInfo)=>{
           
           Object.values(data).map(m=>{
-          const map = plainToClass(Columen,m);
+          const map = plainToClass(Column,m);
           // console.log(m);
           })
           // Object.values(data).map((rowDatta,index:number,array:unknown[])=>{

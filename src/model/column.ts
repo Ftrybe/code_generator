@@ -1,6 +1,7 @@
 import { Expose } from "class-transformer";
 
-export class Columen {
+export class Column {
+    
     @Expose({ name: "TABLE_CATALOG" })
     tableCatalog: string;
     // 关联的数据库
