@@ -1,0 +1,40 @@
+{
+    "mysql": {
+        "user": "root",
+        "password": "admin",
+        "database": "note",
+        "host": "127.0.0.1",
+        "port": 3306
+    },
+    "project": {
+        "targetProjectDirectory": "",
+        "baseTargetJavaDirectory": "",
+        "baseTargetResourcesDirectory": "",
+        "mapperXmlResourcesDirectory": "",
+        "packageName": "",
+        "javaDirectory": "",
+        "baseEntityPackageName": "",
+        "baseMapperPackageName": "",
+        "baseServicePackageName": "",
+        "baseServiceImplPackageName": "",
+        "entityPackageName": "",
+        "mapperPackageName": "",
+        "servicePackageName": "",
+        "serviceImplPackageName": "",
+        "controllerPackageName": ""
+    },
+    "templates": [{
+        "targetDirectory": "",
+        "fileNamePrefix": "",
+        "fileNameSuffix": "",
+        "tplFile": "",
+        "fileType": ""
+    }],
+    "table":{
+        "schema":"",
+        "forceBigDecimals":"",
+        "containsView":"",
+        "exclude":"",
+        "include":""
+    }
+}
