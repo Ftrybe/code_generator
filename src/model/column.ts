@@ -69,3 +69,6 @@ export class Column {
     srsId: string;
 
 }
+export class Columns{
+    column:Column[];
+}

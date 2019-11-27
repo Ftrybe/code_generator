@@ -1,3 +1,9 @@
-var path = require('path');
+import * as path from "path";
 
-export var rootDir = path.join(__dirname,'../');
+export class PathUtils {
+    private constructor() { }
+
+    public static getRootDir(): string {
+        return path.join(__dirname, '../');
+    }
+}

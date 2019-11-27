@@ -1,3 +1,5 @@
+import { Template } from "./template";
+
 export class Templates {
     // 如果文件存在是否重写
     overwrite:boolean;
@@ -6,5 +8,5 @@ export class Templates {
     // 模板文件的存放路径
     tplDirectory:string;
     // 模板文件
-    templates: Templates[];
+    templates: Template[];
 }

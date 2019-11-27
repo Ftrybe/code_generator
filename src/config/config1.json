@@ -30,11 +30,11 @@
         "tplFile": "",
         "fileType": ""
     }],
-    "table": {
-        "schema": "note",
-        "forceBigDecimals": "",
-        "containsView": "",
-        "exclude": "",
-        "include": "sys_diary"
+    "table":{
+        "schema":"",
+        "forceBigDecimals":"",
+        "containsView":"",
+        "exclude":"",
+        "include":""
     }
 }
