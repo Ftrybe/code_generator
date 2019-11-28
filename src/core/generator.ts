@@ -8,7 +8,7 @@ export class Generator {
     }
     public generate(){
         const db= new DB(this.config);
-        db.getTableInfo();
+        const dbinfo = db.getDBData();
         
     }   
 }

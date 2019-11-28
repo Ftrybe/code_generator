@@ -1,8 +1,8 @@
+import { plainToClass } from 'class-transformer';
 import * as fs from 'fs';
-import { PathUtils } from '../utils/path.utils';
 import * as path from "path";
 import { Config } from '../model/config';
-import { plainToClass, TransformPlainToClass } from 'class-transformer';
+import { PathUtils } from '../utils/path.utils';
 export class ConfigParse {
     private config: Config = new Config();
     constructor() { }
