@@ -1,0 +1,119 @@
+package {{prop.controllerPackageName}};
+
+import com.silverdata.smart.core.validator.groups.AddGroup;
+import com.silverdata.smart.core.validator.groups.DefaultGroup;
+import com.silverdata.smart.core.validator.groups.EditGroup;
+import com.silverdata.smart.core.web.BaseController;
+import com.silverdata.smart.core.web.validate.AjaxResponse;
+import com.silverdata.smart.core.persistence.PageUtils;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+import {{prop.entityPackageName}.{{table.tableName};
+import {{prop.servicePackageName}.{{table.tableName}Service;
+
+@Api(tags = "{{table.remarks}}-接口")
+@RestController
+public class {{table.tableName}}Controller extends BaseController {
+    @Autowired
+    private {{table.tableName}}Service {{table.tableNameLower}}Service;
+
+    /**
+    * 根据ID查询{{table.remarks}}
+    * @param id
+    * @return
+    */
+    @ApiOperation(value = "根据ID查询{{table.remarks}}",notes = "根据ID进行{{table.remarks}}查询，id不可为空。",position = 1)
+    @ApiImplicitParam(name = "id", value = "{{table.remarks}}ID", required = true, dataType = "long", paramType = "path")
+    @GetMapping("/{{table.tableNamePluralize}}/{id}")
+    public AjaxResponse<{{table.tableName}}> findById(@PathVariable("id") Long id){
+        {{table.tableName}} {{table.tableNameLower}} = {{table.tableNameLower}Service.get(id);
+        AjaxResponse<{{table.tableName}}> ajaxResponse = AjaxResponse.success();
+        ajaxResponse.setData({{table.tableNameLower}});
+        return ajaxResponse;
+    }
+
+    /**
+    * 获取所有{{table.remarks}}数据。分页情况下：入参含有pagenum和pagesize即可，如若排序另加入入参为ordercolumn和sort
+    * @param {{table.tableNameLower}}
+    * @return
+    */
+    @ApiOperation(value = "获取所有或分页获取{{table.remarks}}数据",notes = "分页情况下：入参含有pagenum和pagesize即可，如若排序另加入入参为ordercolumn和sort",position = 2)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "pagenum", value = "页码数（分页下使用）", required = false, dataType = "int", paramType = "query"),
+        @ApiImplicitParam(name = "pagesize", value = "每页条数（分页下使用）", required = false, dataType = "int", paramType = "query"),
+        @ApiImplicitParam(name = "ordercolumn", value = "排序列（分页下使用）", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "sort", value = "排序顺序（分页下使用，升序：asc；降序：desc）", required = false, dataType = "string", paramType = "query",allowableValues = "asc,desc")
+    })
+    @GetMapping("/{{{table.tableNamePluralize}}")
+    public AjaxResponse<List<{{table.tableName}}>> findAll({{table.tableName}} {{table.tableNameLower}}){
+        //启动是否分页，必须保证调用该方法后，后续查询语句为要分页的语句，下个select会使用分页查询，用完即失效。
+        PageUtils.startPage();
+        List<{{table.tableName}}> {{table.tableNameLower}}List = {{table.tableNameLower}}Service.getByDynamicWhere({{table.tableNameLower}});
+        //对查询数据进行转换，转换成前端需要的数据结构。
+        AjaxResponse<List<{{table.tableName}}>> ajaxResponse = converPageData({{table.tableNameLower}}List);
+        return ajaxResponse;
+    }
+
+    /**
+    * 新增{{table.remarks}}
+    * @param {{table.tableNameLower}}
+    * @return
+    */
+    @ApiOperation(value = "新增{{table.remarks}}",notes = "新增一个{{table.remarks}}",position = 20)
+    @PostMapping("/{{table.tableNamePluralize}}")
+    public AjaxResponse save(@Validated({DefaultGroup.class,AddGroup.class}) {{table.tableName}} {{table.tableNameLower}}){
+        {{table.tableNameLower}}Service.save({{table.tableNameLower}});
+        return AjaxResponse.success("新增成功");
+    }
+
+    /**
+    * 修改{{table.remarks}}
+    * @param {{table.tableNameLower}}
+    * @return
+    */
+    @ApiOperation(value = "修改{{table.remarks}}",notes = "修改{{table.remarks}}数据",position = 30)
+    @PutMapping("/{{{table.tableNamePluralize}}")
+    @RequiresPermissions("{{table.permissions}:update")
+    public AjaxResponse update(@Validated({DefaultGroup.class,EditGroup.class}) {{table.tableName}} {{table.tableNameLower}}){
+        {{table.tableNameLower}}Service.update({{table.tableNameLower}});
+        return AjaxResponse.success("修改成功");
+    }
+
+    /**
+    * 动态修改{{table.remarks}}[常用于更新个别字段，比如审核状态、数据状态等]
+    * @param {{table.tableNameLower}}
+    * @return
+    */
+    @ApiOperation(value = "动态修改{{table.remarks}}",notes = "常用于更新个别字段，比如审核状态、数据状态等",position = 31)
+    @PutMapping("/{{table.tableNameSelectivePluralize}")
+    @RequiresPermissions("{{table.permissions}:state")
+    public AjaxResponse updateSelective({{table.tableName}} {{table.tableNameLower}}){
+        {{table.tableNameLower}}Service.updateSelective({{table.tableNameLower}});
+        return AjaxResponse.success("操作成功");
+    }
+
+    /**
+    * 根据ID删除{{table.remarks}}
+    * @param id
+    * @return
+    */
+    @ApiOperation(value = "删除{{table.remarks}}",notes = "根据ID删除{{table.remarks}}",position = 50)
+    @ApiImplicitParam(name = "id", value = "{{table.remarks}}ID", required = true, dataType = "long", paramType = "path")
+    @DeleteMapping("/{{{table.tableNamePluralize}}/{id}")
+    @RequiresPermissions("{{table.permissions}:delete")
+    public AjaxResponse delete(@PathVariable("id") Long id){
+        {{table.tableNameLower}}Service.delete(id);
+        return AjaxResponse.success("删除成功");
+    }
+}

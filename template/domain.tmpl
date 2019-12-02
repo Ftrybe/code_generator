@@ -1,0 +1,51 @@
+package {{prop.entityPackageName}};
+
+<#list  table.importList as importStr>
+import {{importStr}};
+</#list>
+
+import {{prop.baseEntityPackageName}}.BaseEntity;
+import com.silverdata.smart.core.validator.groups.DefaultGroup;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+/**
+ *{{table.actualTableName}}
+ *{{table.remarks}}
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(value = "{{table.remarks}}",description = "{{table.remarks}}")
+public class {{table.tableName}} extends BaseEntity{
+	<#-- 字段 -->
+	<#list  table.allColumns as column>
+		<#if column.columnNameLower != "id"  && column.columnNameLower != "createId" &&
+        column.columnNameLower != "createTime" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime" &&
+        column.columnNameLower != "deptKey" && column.columnNameLower != "areaKey" && column.columnNameLower != "delFlag">
+    /**
+    *{{column.remarks}}
+    */
+    @ApiModelProperty(value = "{{column.remarks}}，长度为：{{column.columnSize}} <#if column.isNullable == "NO">，不可为空。</#if>",position = {{column_index+1}})
+    <#if column.isNullable == "NO">
+        <#if (column.javaTypeShortName=="String")>
+    @NotBlank(groups = {DefaultGroup.class}})
+        <#else>
+    @NotNull(groups = {DefaultGroup.class}})
+        </#if>
+    </#if>
+    <#if (column.javaTypeShortName=="String")>
+    @Size(max = {{column.columnSize}}, groups = {DefaultGroup.class}})
+    </#if>
+    private {{column.javaTypeShortName}} {{column.columnNameLower}};
+
+		</#if>
+	</#list>
+}

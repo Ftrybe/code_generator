@@ -10,5 +10,6 @@ export class Generator {
         const db= new DB(this.config);
         const dbinfo = db.getDBData();
         
+        
     }   
 }

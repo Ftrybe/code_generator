@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="${prop.mapperPackageName}.${table.tableName}Mapper" >
+	<resultMap id="baseResultMap" type="${prop.entityPackageName}.${table.tableName}" >
+		<#-- 主键字段-->
+		<#list  table.primaryKeyColumns as column>
+		<id column="${column.actualColumnName}" property="${column.columnNameLower}" jdbcType="${column.jdbcTypeInformation.jdbcTypeName}" />
+		</#list>
+		<#--非主键列，非blob列-->
+		<#list  table.baseColumns as column>
+		<result column="${column.actualColumnName}" property="${column.columnNameLower}" jdbcType="${column.jdbcTypeInformation.jdbcTypeName}" />
+		</#list>
+	</resultMap>
+
+	<sql id="baseColumnList" >
+		<#-- 字段 -->
+		<#list  table.allColumns as column>a.${column.actualColumnName}<#if column_has_next>,</#if></#list>
+	</sql>
+
+	<sql id="dynamicWhere">
+		<where>
+			<#list table.allColumns as column>
+			<#if (column.columnNameLower == "delFlag")>
+				AND a.del_flag = '0'
+			</#if>
+			<#if (column.javaTypeShortName=="String" && column.columnNameLower != "delFlag")>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND a.${column.actualColumnName} = <#noparse>#{</#noparse>${column.columnNameLower}} </if>
+			<#elseif (column.columnNameLower != "delFlag")>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND a.${column.actualColumnName}  =<#noparse>#{</#noparse>${column.columnNameLower}} </if>
+			</#if>
+			</#list>
+		</where>
+	</sql>
+
+	<select id="get" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM ${table.actualTableName} a
+        WHERE
+		<#-- 主键字段-->
+		<#list  table.primaryKeyColumns as column>
+			<#if test="column_index != 0"> AND </#if>a.${column.actualColumnName}<#noparse>=#{</#noparse>${column.columnNameLower}<#noparse>}</#noparse>
+		</#list>
+		<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
+            AND a.del_flag = '0'
+		</#if>
+	</select>
+
+	<select id="getByDynamicWhere" parameterType="${prop.entityPackageName}.${table.tableName}" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM ${table.actualTableName} a
+		<include refid="dynamicWhere" />
+	</select>
+
+	<select id="getByCustomWhere" parameterType="java.lang.String" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM ${table.actualTableName} a
+		    <#noparse>#{strWhere}</#noparse>
+	</select>
+
+    <insert id="save" parameterType="${prop.entityPackageName}.${table.tableName}">
+        insert into ${table.actualTableName}(
+        <#-- 字段 -->
+			<#list  table.allColumns as column>${column.actualColumnName}<#if column_has_next>,</#if></#list>
+		)values(
+        <#-- 字段 -->
+		<#list  table.allColumns as column><#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse><#if column_has_next>,</#if></#list>
+		)
+    </insert>
+
+    <update id="update" parameterType="${prop.entityPackageName}.${table.tableName}">
+        UPDATE ${table.actualTableName} SET<#rt>
+        <#--非主键列，非blob列-->
+	<#assign isFirst=true/>
+    <#list  table.baseColumns as column>
+		<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag">
+			<#lt><#if !isFirst>,</#if>
+			${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse><#rt>
+            <#assign isFirst=false/>
+		</#if>
+    </#list>
+
+        WHERE
+        <#-- 主键字段-->
+        <#list  table.primaryKeyColumns as column>
+            <#if test="column_index != 0"> AND </#if>${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower}<#noparse>}</#noparse><#if column_has_next>,</#if>
+        </#list>
+    </update>
+
+    <update id="updateSelective" parameterType="${prop.entityPackageName}.${table.tableName}">
+        UPDATE ${table.actualTableName}
+        <set>
+	<#--非主键列，非blob列-->
+	<#list  table.baseColumns as ucolumn>
+		<#if ucolumn.columnNameLower == "updateId" || ucolumn.columnNameLower == "updateTime">
+			${ucolumn.actualColumnName}=<#noparse>#{</#noparse>${ucolumn.columnNameLower},jdbcType=${ucolumn.jdbcTypeInformation.jdbcTypeName}<#noparse>},</#noparse>
+		</#if>
+	</#list>
+	<#list  table.baseColumns as column>
+		<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
+			<#if (column.javaTypeShortName=="String")>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
+			<#else>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
+			</#if>
+		</#if>
+	</#list>
+        </set>
+        WHERE
+	<#-- 主键字段-->
+        <#list  table.primaryKeyColumns as column>
+			<#if test="column_index != 0"> AND </#if>${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower}<#noparse>}</#noparse><#if column_has_next>,</#if>
+		</#list>
+    </update>
+
+<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
+    <update id="delete"  parameterType="${prop.entityPackageName}.${table.tableName}">
+        UPDATE ${table.actualTableName} SET
+		<#list  table.baseColumns as column>
+			<#if column.columnNameLower == "updateId" || column.columnNameLower == "updateTime">
+			${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,
+			</#if>
+		</#list>
+        	del_flag = '1'
+        WHERE
+	<#-- 主键字段-->
+		<#list  table.primaryKeyColumns as column>
+			<#if test="column_index != 0"> AND </#if>${column.actualColumnName}<#noparse>=#{</#noparse>${column.columnNameLower}<#noparse>}</#noparse>
+		</#list>
+    </update>
+<#else >
+    <delete id="delete">
+        DELETE FROM ${table.actualTableName}
+		WHERE
+	<#-- 主键字段-->
+		<#list  table.primaryKeyColumns as column>
+			<#if test="column_index != 0"> AND </#if>${column.actualColumnName}<#noparse>=#{</#noparse>${column.columnNameLower}<#noparse>}</#noparse>
+		</#list>
+    </delete>
+</#if>
+
+<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
+    <update id="deleteSelective"  parameterType="${prop.entityPackageName}.${table.tableName}">
+        UPDATE ${table.actualTableName} SET
+		<#list  table.baseColumns as column>
+			<#if column.columnNameLower == "updateId" || column.columnNameLower == "updateTime">
+			${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,
+			</#if>
+		</#list>
+        	del_flag = '1'
+        <where>
+		<#list  table.baseColumns as column>
+			<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
+			<#if (column.javaTypeShortName=="String")>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<#else>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			</#if>
+			</#if>
+		</#list>
+        </where>
+    </update>
+<#else >
+    <delete id="deleteSelective">
+        DELETE FROM ${table.actualTableName}
+        <where>
+		<#list  table.baseColumns as column>
+			<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
+			<#if (column.javaTypeShortName=="String")>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<#else>
+			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			</#if>
+			</#if>
+		</#list>
+        </where>
+    </delete>
+</#if>
+</mapper>

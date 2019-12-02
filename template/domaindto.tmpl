@@ -1,0 +1,33 @@
+package {{prop.entityPackageName}};
+
+<#list  table.importList as importStr>
+import {{importStr}};
+</#list>
+
+import {{prop.baseEntityPackageName}}.BaseEntity;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ *{{table.actualTableName}}
+ *{{table.remarks}}[DTO]
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class {{table.tableName}}DTO extends BaseEntity{
+	<#-- 字段 -->
+	<#list  table.allColumns as column>
+		<#if column.columnNameLower != "id"  && column.columnNameLower != "createId" &&
+        column.columnNameLower != "createTime" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime" &&
+        column.columnNameLower != "deptKey" && column.columnNameLower != "areaKey" && column.columnNameLower != "delFlag">
+    /**
+    *{{column.remarks}}
+    */
+    private {{column.javaTypeShortName}} {{column.columnNameLower}};
+
+		</#if>
+	</#list>
+}
