@@ -24,9 +24,9 @@
 				AND a.del_flag = '0'
 			</#if>
 			<#if (column.javaTypeShortName=="String" && column.columnNameLower != "delFlag")>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND a.${column.actualColumnName} = <#noparse>#{</#noparse>${column.columnNameLower}} </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND a.${column.actualColumnName} = <#noparse>#{</#noparse>${column.columnNameLower}} </if>
 			<#elseif (column.columnNameLower != "delFlag")>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND a.${column.actualColumnName}  =<#noparse>#{</#noparse>${column.columnNameLower}} </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND a.${column.actualColumnName}  =<#noparse>#{</#noparse>${column.columnNameLower}} </if>
 			</#if>
 			</#list>
 		</where>
@@ -101,9 +101,9 @@
 	<#list  table.baseColumns as column>
 		<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
 			<#if (column.javaTypeShortName=="String")>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
 			<#else>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse>,</if>
 			</#if>
 		</#if>
 	</#list>
@@ -154,9 +154,9 @@
 		<#list  table.baseColumns as column>
 			<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
 			<#if (column.javaTypeShortName=="String")>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
 			<#else>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
 			</#if>
 			</#if>
 		</#list>
@@ -169,9 +169,9 @@
 		<#list  table.baseColumns as column>
 			<#if column.columnNameLower != "createId" && column.columnNameLower != "createTime" && column.columnNameLower != "delFlag" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime">
 			<#if (column.javaTypeShortName=="String")>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
 			<#else>
-			<if test="@com.silverdata.smart.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty(${column.columnNameLower})"> AND ${column.actualColumnName}=<#noparse>#{</#noparse>${column.columnNameLower},jdbcType=${column.jdbcTypeInformation.jdbcTypeName}<#noparse>}</#noparse> </if>
 			</#if>
 			</#if>
 		</#list>
