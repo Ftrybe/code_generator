@@ -5,12 +5,11 @@ import { Column, Columns } from "../model/column";
 import { Config } from "../model/config";
 import { Table } from "../model/table";
 import { DbData } from "../model/db-data";
-import { ClassType } from "class-transformer/ClassTransformer";
 
 export default class DB {
 
   private pool: mysql.Pool;
-  constructor(private config: Config) {
+  constructor(private config: Config) {    
     const connConfig: mysql.ConnectionConfig = config.mysql;
     this.pool = mysql.createPool({
       user: connConfig.user,

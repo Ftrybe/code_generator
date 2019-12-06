@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import {{prop.entityPackageName}.{{table.tableName};
-import {{prop.servicePackageName}.{{table.tableName}Service;
+import {{prop.entityPackageName}.{{table.tableName}};
+import {{prop.servicePackageName}.{{table.tableName}}Service;
 
 @Api(tags = "{{table.remarks}}-接口")
 @RestController
@@ -96,7 +96,7 @@ public class {{table.tableName}}Controller extends BaseController {
     * @return
     */
     @ApiOperation(value = "动态修改{{table.remarks}}",notes = "常用于更新个别字段，比如审核状态、数据状态等",position = 31)
-    @PutMapping("/{{table.tableNameSelectivePluralize}")
+    @PutMapping("/{{table.tableNameSelectivePluralize}}")
     @RequiresPermissions("{{table.permissions}}:state")
     public AjaxResponse updateSelective({{table.tableName}} {{table.tableNameLower}}){
         {{table.tableNameLower}}Service.updateSelective({{table.tableNameLower}});

@@ -10,6 +10,7 @@ export class Bootstrap{
   constructor(){
     const service:Service = new Service();
     service.start();
+    console.log("项目开始运行");
   }
 }
 new Bootstrap();
