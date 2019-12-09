@@ -4,7 +4,6 @@ import * as path from "path";
 import { Config } from '../model/config';
 import { PathUtils } from '../utils/path.utils';
 import * as handlebars from 'handlebars';
-import { throws } from 'assert';
 export class ConfigParse {
     private config: Config = new Config();
     constructor() { 

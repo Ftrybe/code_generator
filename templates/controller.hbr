@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
-import {{prop.entityPackageName}.{{table.tableName}};
-import {{prop.servicePackageName}.{{table.tableName}}Service;
+import {{prop.entityPackageName}}.{{table.tableName}};
+import {{prop.servicePackageName}}.{{table.tableName}}Service;
 
 @Api(tags = "{{table.remarks}}-接口")
 @RestController
@@ -37,7 +37,7 @@ public class {{table.tableName}}Controller extends BaseController {
     @ApiImplicitParam(name = "id", value = "{{table.remarks}}ID", required = true, dataType = "long", paramType = "path")
     @GetMapping("/{{table.tableNamePluralize}}/{id}")
     public AjaxResponse<{{table.tableName}}> findById(@PathVariable("id") Long id){
-        {{table.tableName}} {{table.tableNameLower}} = {{table.tableNameLower}Service.get(id);
+        {{table.tableName}} {{table.tableNameLower}} = {{table.tableNameLower}}Service.get(id);
         AjaxResponse<{{table.tableName}}> ajaxResponse = AjaxResponse.success();
         ajaxResponse.setData({{table.tableNameLower}});
         return ajaxResponse;
@@ -55,7 +55,7 @@ public class {{table.tableName}}Controller extends BaseController {
         @ApiImplicitParam(name = "ordercolumn", value = "排序列（分页下使用）", required = false, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "sort", value = "排序顺序（分页下使用，升序：asc；降序：desc）", required = false, dataType = "string", paramType = "query",allowableValues = "asc,desc")
     })
-    @GetMapping("/{{{table.tableNamePluralize}}")
+    @GetMapping("/{{table.tableNamePluralize}}")
     public AjaxResponse<List<{{table.tableName}}>> findAll({{table.tableName}} {{table.tableNameLower}}){
         //启动是否分页，必须保证调用该方法后，后续查询语句为要分页的语句，下个select会使用分页查询，用完即失效。
         PageUtils.startPage();
@@ -83,7 +83,7 @@ public class {{table.tableName}}Controller extends BaseController {
     * @return
     */
     @ApiOperation(value = "修改{{table.remarks}}",notes = "修改{{table.remarks}}数据",position = 30)
-    @PutMapping("/{{{table.tableNamePluralize}}")
+    @PutMapping("/{{table.tableNamePluralize}}")
     @RequiresPermissions("{{table.permissions}}:update")
     public AjaxResponse update(@Validated({DefaultGroup.class,EditGroup.class}) {{table.tableName}} {{table.tableNameLower}}){
         {{table.tableNameLower}}Service.update({{table.tableNameLower}});
@@ -110,7 +110,7 @@ public class {{table.tableName}}Controller extends BaseController {
     */
     @ApiOperation(value = "删除{{table.remarks}}",notes = "根据ID删除{{table.remarks}}",position = 50)
     @ApiImplicitParam(name = "id", value = "{{table.remarks}}ID", required = true, dataType = "long", paramType = "path")
-    @DeleteMapping("/{{{table.tableNamePluralize}}/{id}")
+    @DeleteMapping("/{{table.tableNamePluralize}}/{id}")
     @RequiresPermissions("{{table.permissions}}:delete")
     public AjaxResponse delete(@PathVariable("id") Long id){
         {{table.tableNameLower}}Service.delete(id);

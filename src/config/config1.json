@@ -3,38 +3,80 @@
         "user": "root",
         "password": "admin",
         "database": "note",
-        "host": "127.0.0.1",
+        "host": "localhost",
         "port": 3306
     },
     "project": {
-        "targetProjectDirectory": "",
-        "baseTargetJavaDirectory": "",
-        "baseTargetResourcesDirectory": "",
-        "mapperXmlResourcesDirectory": "",
-        "packageName": "",
-        "javaDirectory": "",
-        "baseEntityPackageName": "",
-        "baseMapperPackageName": "",
-        "baseServicePackageName": "",
-        "baseServiceImplPackageName": "",
-        "entityPackageName": "",
-        "mapperPackageName": "",
-        "servicePackageName": "",
-        "serviceImplPackageName": "",
-        "controllerPackageName": ""
+        "baseTargetJavaDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/java",
+        "baseTargetResourcesDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/resources",
+        "mapperXmlResourcesDirectory": "mappings/sys",
+        "packageName": "com.silverdata.atom.portal.sys",
+        "javaDirectory": "com/silverdata/atom/portal/sys",
+        "baseEntityPackageName": "com.silverdata.smart.core.persistence",
+        "baseMapperPackageName": "com.silverdata.smart.core.persistence",
+        "baseServicePackageName": "com.silverdata.smart.core.service",
+        "baseServiceImplPackageName": "com.silverdata.smart.core.service",
+        "entityPackageName": "{{project.packageName}}.domain",
+        "mapperPackageName": "{{project.packageName}}.mapper",
+        "servicePackageName": "{{project.packageName}}.service",
+        "serviceImplPackageName": "{{project.packageName}}.service.impl",
+        "controllerPackageName": "{{project.packageName}}.web.controller"
     },
     "templates": [{
-        "targetDirectory": "",
-        "fileNamePrefix": "",
-        "fileNameSuffix": "",
-        "tplFile": "",
-        "fileType": ""
-    }],
-    "table":{
-        "schema":"",
-        "forceBigDecimals":"",
-        "containsView":"",
-        "exclude":"",
-        "include":""
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/domain",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "",
+            "tplFile": "domain.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/domain",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "DTO",
+            "tplFile": "domaindto.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/controller",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Controller",
+            "tplFile": "controller.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/service",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Service",
+            "tplFile": "service.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/service/impl",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "ServiceImpl",
+            "tplFile": "serviceimpl.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/mapper",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Mapper",
+            "tplFile": "mapper.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}/domain",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Mapper",
+            "tplFile": "mapperxml.hbr",
+            "fileType": "xml"
+        }
+    ],
+    "table": {
+        "schema": "note",
+        "forceBigDecimals": "",
+        "containsView": "",
+        "exclude": "",
+        "include": "sys_diary"
     }
 }

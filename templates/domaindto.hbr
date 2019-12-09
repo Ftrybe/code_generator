@@ -1,8 +1,8 @@
 package {{prop.entityPackageName}};
+{{#each table.importList}}
+import {{this}}
+{{/each}}
 
-<#list  table.importList as importStr>
-import {{importStr}};
-</#list>
 
 import {{prop.baseEntityPackageName}}.BaseEntity;
 
@@ -18,16 +18,26 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class {{table.tableName}}DTO extends BaseEntity{
-	<#-- 字段 -->
-	<#list  table.allColumns as column>
-		<#if column.columnNameLower != "id"  && column.columnNameLower != "createId" &&
-        column.columnNameLower != "createTime" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime" &&
-        column.columnNameLower != "deptKey" && column.columnNameLower != "areaKey" && column.columnNameLower != "delFlag">
+	 {{!-- 字段  --}}
+  {{#each table.allColumns}}
+    {{#with this}}
+        {{#if (and
+         (ne columnNameLower "id")
+         (ne columnNameLower "createId")
+         (ne columnNameLower "createTime")
+         (ne columnNameLower "updateId")
+         (ne columnNameLower "updateTime")
+         (ne columnNameLower "deptKey")
+         (ne columnNameLower "areaKey")
+         (ne columnNameLower "delFlag")
+         )
+        }}
     /**
-    *{{column.remarks}}
+    *{{remarks}}
     */
-    private {{column.javaTypeShortName}} {{column.columnNameLower}};
+    private {{javaTypeShortName}} {{columnNameLower}};
 
-		</#if>
-	</#list>
+	    {{/if}}
+    {{/with}}
+	{{/each}}
 }

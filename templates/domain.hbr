@@ -25,26 +25,36 @@ import javax.validation.constraints.Size;
 @ApiModel(value = "{{table.remarks}}",description = "{{table.remarks}}")
 public class {{table.tableName}} extends BaseEntity{
     {{#each table.allColumns}}
-	<#list  table.allColumns as column>
-		<#if column.columnNameLower != "id"  && column.columnNameLower != "createId" &&
-        column.columnNameLower != "createTime" && column.columnNameLower != "updateId" && column.columnNameLower != "updateTime" &&
-        column.columnNameLower != "deptKey" && column.columnNameLower != "areaKey" && column.columnNameLower != "delFlag">
+    {{#with this}}
+        {{#if (and
+         (ne columnNameLower "id")
+         (ne columnNameLower "createId")
+         (ne columnNameLower "createTime")
+         (ne columnNameLower "updateId")
+         (ne columnNameLower "updateTime")
+         (ne columnNameLower "deptKey")
+         (ne columnNameLower "areaKey")
+         (ne columnNameLower "delFlag")
+         )
+        }}
     /**
-    *{{column.remarks}}
+    *{{remarks}}
     */
-    @ApiModelProperty(value = "{{column.remarks}}，长度为：{{column.columnSize}} <#if column.isNullable == "NO">，不可为空。</#if>",position = {{column_index+1}})
-    <#if column.isNullable == "NO">
-        <#if (column.javaTypeShortName=="String")>
-    @NotBlank(groups = {DefaultGroup.class}})
-        <#else>
-    @NotNull(groups = {DefaultGroup.class}})
-        </#if>
-    </#if>
-    <#if (column.javaTypeShortName=="String")>
-    @Size(max = {{column.columnSize}}, groups = {DefaultGroup.class}})
-    </#if>
-    private {{column.javaTypeShortName}} {{column.columnNameLower}};
+    @ApiModelProperty(value = "{{remarks}}，长度为：{{columnSize}} {{#if (eq isNullable "NO")}}，不可为空。{{/if}}",position = {{@index}})
+    {{#if (eq isNullable "NO")}}
+        {{#if (eq javaTypeShortName "String")}}
+    @NotBlank(groups = {DefaultGroup.class})
+        {{/if}}
+        {{#if (ne javaTypeShortName "String")}}
+    @NotNull(groups = {DefaultGroup.class})
+        {{/if}}
+    {{/if}}
+    {{#if (eq javaTypeShortName "String")}}
+    @Size(max = {{columnSize}}, groups = {DefaultGroup.class})
+    {{/if}}
+    private {{javaTypeShortName}} {{columnNameLower}};
 
-	</#if>
+	{{/if}}
+    {{/with}}
 	{{/each}}
 }

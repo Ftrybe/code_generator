@@ -16,7 +16,7 @@ export default class DB {
       password: connConfig.password,
       database: connConfig.database,
       host: connConfig.host,
-      port: connConfig.port
+      port: connConfig.port,
     });
   }
 
