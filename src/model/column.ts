@@ -21,7 +21,7 @@ export class Column {
     columnDefault: string;
     // 是否为空
     @Expose({ name: "IS_NULLABLE" })
-    isNullable: boolean;
+    isNullable: string;
     // 数据类型
     @Expose({ name: "DATA_TYPE" })
     dataType: string;

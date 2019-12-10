@@ -20,6 +20,4 @@ export class ConfigParse {
         this.config =  plainToClass(Config,renderJson);
         return this.config;
     }
-
-    
 }

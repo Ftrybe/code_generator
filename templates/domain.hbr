@@ -40,12 +40,11 @@ public class {{table.tableName}} extends BaseEntity{
     /**
     *{{remarks}}
     */
-    @ApiModelProperty(value = "{{remarks}}，长度为：{{columnSize}} {{#if (eq isNullable "NO")}}，不可为空。{{/if}}",position = {{@index}})
+    @ApiModelProperty(value = "{{remarks}}，长度为：{{columnSize}} {{#if (eq isNullable "NO")}}，不可为空。{{/if}}",position = {{inc @index}})
     {{#if (eq isNullable "NO")}}
         {{#if (eq javaTypeShortName "String")}}
     @NotBlank(groups = {DefaultGroup.class})
-        {{/if}}
-        {{#if (ne javaTypeShortName "String")}}
+        {{else}}
     @NotNull(groups = {DefaultGroup.class})
         {{/if}}
     {{/if}}

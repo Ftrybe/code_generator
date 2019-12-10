@@ -1,5 +1,8 @@
 import { Columns } from "./column";
 import { ProjectConfig } from "./config";
+import * as Inflected from 'inflected';
+import { FormatUtils } from '../utils/format.utils.ts'
+import { DbUtils } from '../utils/db.utils';
 
 export class HandlebarJson {
     table: HandlebarsTable = new HandlebarsTable();
@@ -15,33 +18,53 @@ export class HandlebarsTable {
     catalog: string;
     schema: string;
     // 表名首字母小写
-    tableNameLower: string;
+    // tableNameLower: string;
     // 权限
-    permissions: string;
     //表名的复数
-    tableNamePluralize: string;
+    // tableNamePluralize: string;
 
-    baseColumns: HandlebarsColumn = new HandlebarsColumn();
+    baseColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
     allColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
-    primaryKeyColumns: HandlebarsColumn = new HandlebarsColumn();
-    blobColumns: HandlebarsColumn = new HandlebarsColumn();
+
+    blobColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
+
+    get tableNameLower(): string {
+        return this.tableName.substring(0, 1).toLocaleLowerCase() + this.tableName.substring(1);
+    }
+    get tableNamePluralize(): string {
+        return Inflected.pluralize(this.tableName);
+    }
+    get tableNameSelectivePluralize(): string {
+        return Inflected.pluralize(this.tableNameLower + this.tableName);
+    }
+    get permissions(): string {
+        return this.actualTableName.substring(0, this.actualTableName.indexOf("_")).toLowerCase() + ":" + this.actualTableName.substring(this.actualTableName.indexOf("_") + 1).toLowerCase();
+    }
+    get allColumnNameLowers(): Array<string> {
+        const columnNames = new Array<string>();
+        this.allColumns.map(column => {
+            columnNames.push(column.columnNameLower);
+        })
+        return columnNames;
+    }
+
+    get primaryKeyColumns(): Array<HandlebarsColumn> {
+        let primaryKeyColumns = new Array<HandlebarsColumn>();
+        primaryKeyColumns = this.allColumns.filter(column => column.columnKey === "PRI");
+        return primaryKeyColumns;
+    }
+
 }
 
 export class HandlebarsColumn {
-    // 对应得表
-    table: HandlebarsTable;
     // 数据库对应得列名
     actualColumnName: string;
     // 列名
     columnName: string;
-    // 列名,首字母大写
-    columnNameUpper: string;
-    // 列名,首字母小写
-    columnNameLower: string;
     // 来自 java.sql.Types 的 SQL 类型
     dataType: string;
     // 根据sql类型获得的java类型
-    javaTypeShortName: string;
+    // javaTypeShortName: string;
     // 数据源依赖的类型名称，对于 UDT，该类型名称是完全限定的
     typeName: string;
     // 列的大小
@@ -49,7 +72,7 @@ export class HandlebarsColumn {
     // 基数（通常为 10 或 2）
     numPrecRadix: number;
     // 是否允许使用 NULL
-    nullable: number;
+    nullable: string;
     // 注释
     remarks: string;
     // 该列的默认值，当值在单引号内时应被解释为一个字符串（可为 null）
@@ -65,6 +88,8 @@ export class HandlebarsColumn {
      * 空字符串 --- 如果不知道参数是否可以包括 null
      */
     isNullable: string;
+
+    columnKey: string;
     /**
    * 指示此列是否自动增加
    * YES --- 如果该列自动增加
@@ -72,36 +97,27 @@ export class HandlebarsColumn {
    * 空字符串 --- 如果不能确定该列是否是自动增加参数
    */
     isAutoincrement: string;
+    // 字段名小写
+    get columnNameUpper(): string {
+        return FormatUtils.toUpperCase(this.columnName);
+    }
+    get columnNameLower(): string {
+        return this.columnName.toLocaleLowerCase();
+    }
 
     /**
   * 列对应的java类型
   *
   * 
   */
-    // public getJavaTypeShortName():string {
-    //     let answer = null;
-    //     if (this.jdbcTypeInformation != null) {
-    //         FullyQualifiedJavaType javaType = jdbcTypeInformation.getFullyQualifiedJavaType();
-    //         if (javaType != null) {
-    //             answer = javaType.getShortName();
-    //         }
-    //     }
-    //     return answer;
-    // }
+    get javaTypeShortName(): string {
+        return this.typeName ? DbUtils.convertShortJavaType(this.typeName) : null;
+    }
 
     // /**
     //  * 列对应的java类型
     //  *
-    //  * @return
-    //  */
-    // public String getJavaTypeName() {
-    //     String answer = null;
-    //     if (this.jdbcTypeInformation != null) {
-    //         FullyQualifiedJavaType javaType = jdbcTypeInformation.getFullyQualifiedJavaType();
-    //         if (javaType != null) {
-    //             answer = javaType.getFullyQualifiedName();
-    //         }
-    //     }
-    //     return answer;
-    // }
+    get javaTypeName(): string {
+        return this.typeName ? DbUtils.convertJavaType(this.typeName) : null;
+    }
 }

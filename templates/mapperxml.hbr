@@ -19,9 +19,7 @@
 	<sql id="baseColumnList">
 		{{!-- 字段  --}}
 		{{#each table.allColumns}}
-		{{#with this}}
-		a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
-		{{/with}}
+		{{#with this}}a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with}}
 		{{/each}}
 	</sql>
 
@@ -34,14 +32,11 @@
 			{{/if}}
 			{{#if (and 
 					(eq javaTypeShortName "String")
-					(en columnNameLower "delFlag")
+					(ne columnNameLower "delFlag")
 			)}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND
-				a.{{actualColumnName}} =#{{{columnNameLower}} </if>
-			{{/if}}
-			{{else if (en columnNameLower "delFlag")}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})">
-							AND a.{{actualColumnName}} =#{{{columnNameLower}}} </if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{columnNameLower}} }</if>
+			{{else if (ne columnNameLower "delFlag")}}
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}} =#{ {{columnNameLower}} }</if>
 			{{/if}}
 			{{/with}}
 			{{/each}}
@@ -56,8 +51,7 @@
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index != 0")}} AND {{/if}}a.{{actualColumnName}}=#{
-			{{columnNameLower}}}
+		{{#if (eq test "column_index != 0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{columnNameLower}} }
 		{{/with}}
 		{{/each}}
 		<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
@@ -77,7 +71,7 @@
 		select
 		<include refid="baseColumnList" />
 		FROM {{table.actualTableName}} a
-		    #{strWhere}
+		#{strWhere}
 	</select>
 
 	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
@@ -85,55 +79,48 @@
 		{{!-- 字段 --}}
 		{{#each table.allColumns}}
 		{{#with this}}
-		a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+		a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
 		)values(
 		{{!-- 字段 --}}
-		{{#each table.allColumns}}
+		{{~#each table.allColumns}}
 		{{#with this}}
-			#{{{columnNameLower}},jdbcType={{jdbcTypeName}}
-			}
-			{{#if columnNameLower}},{{if}}
+		#{ {{columnNameLower}},jdbcType={{jdbcTypeName}}
+		}
+		{{#if columnNameLower}},{{/if}}
 		{{/with}}
 		{{/each}}
 		)
 	</insert>
 
 	<update id="update" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
-		UPDATE {{table.actualTableName}} SET<#rt>
-			{{!-- 非主键列，非blob列 --}}
-			<#assign isFirst=true />
-			{{#each table.allColumns}}
-			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
-			{{/with}}
-			{{/each}}
-			<#list table.baseColumns as column>
-				<#if column.columnNameLower !="createId" && column.columnNameLower !="createTime" &&
-					column.columnNameLower !="delFlag">
-					<#lt>
-						<#if !isFirst>,</#if>
-						{{column.actualColumnName}}=<#noparse>#{</#noparse>
-						{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}<#noparse>}
-						</#noparse>
-						<#rt>
-							<#assign isFirst=false />
-				</#if>
-			</#list>
+		UPDATE {{table.actualTableName}} SET
+		{{!-- 非主键列，非blob列 --}}
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (and 
+					(ne columnNameLower "createId")
+					(ne columnNameLower "createTime")
+					(ne columnNameLower "delFlag")
+			)}}
+		{{~#if first}},{{/if}}
+		{{actualColumnName}}=#{
+		{{columnNameLower}},jdbcType={{jdbcTypeName}} }
+		}
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		WHERE
+		{{!-- 主键字段 --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq test "column_index != 0")}} AND {{/if}}{{actualColumnName}}=#{
+		{{column.columnNameLower}} }
+		{{#if @last}}{{else}},{{/if}}
+		{{/with}}
+		{{/each}}
 
-			WHERE
-			{{!-- 主键字段 --}}
-			{{#each table.allColumns}}
-			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
-			{{/with}}
-			{{/each}}
-			<#list table.primaryKeyColumns as column>
-				<#if test="column_index != 0"> AND </#if>{{column.actualColumnName}}=<#noparse>#{</#noparse>
-				{{column.columnNameLower}}<#noparse>}</#noparse>
-				<#if column_has_next>,</#if>
-			</#list>
 	</update>
 
 	<update id="updateSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
@@ -142,7 +129,7 @@
 			{{!-- 非主键列，非blob列 --}}
 			{{#each table.allColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 			{{/with}}
 			{{/each}}
 			<#list table.baseColumns as ucolumn>
@@ -154,7 +141,7 @@
 			</#list>
 			{{#each table.allColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 			{{/with}}
 			{{/each}}
 			<#list table.baseColumns as column>
@@ -180,13 +167,13 @@
 		{{!-- 主键字段 --}}
 		{{#each table.allColumns}}
 		{{#with this}}
-		a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+		a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
 		<#list table.primaryKeyColumns as column>
 			<#if test="column_index != 0"> AND </#if>{{column.actualColumnName}}=<#noparse>#{</#noparse>
 			{{column.columnNameLower}}<#noparse>}</#noparse>
-			<#if column_has_next>,</#if>
+			<#if @last>,</#if>
 		</#list>
 	</update>
 
@@ -195,7 +182,7 @@
 			UPDATE {{table.actualTableName}} SET
 			{{#each table.allColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 			{{/with}}
 			{{/each}}
 			<#list table.baseColumns as column>
@@ -210,7 +197,7 @@
 			{{!-- <#-- 主键字段--> --}}
 			{{#each table.allColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 			{{/with}}
 			{{/each}}
 			<#list table.primaryKeyColumns as column>
@@ -225,7 +212,7 @@
 				{{!-- <#-- 主键字段--> --}}
 				{{#each table.allColumns}}
 				{{#with this}}
-				a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+				a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 				{{/with}}
 				{{/each}}
 				<#list table.primaryKeyColumns as column>
@@ -240,7 +227,7 @@
 			UPDATE {{table.actualTableName}} SET
 			{{#each table.allColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 			{{/with}}
 			{{/each}}
 			<#list table.baseColumns as column>
@@ -254,7 +241,7 @@
 			<where>
 				{{#each table.allColumns}}
 				{{#with this}}
-				a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+				a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 				{{/with}}
 				{{/each}}
 				<#list table.baseColumns as column>
@@ -286,7 +273,7 @@
 				<where>
 					{{#each table.allColumns}}
 					{{#with this}}
-					a.{{actualColumnName}}{{#if column_has_next}},{{/if}}
+					a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
 					{{/with}}
 					{{/each}}
 					<#list table.baseColumns as column>

@@ -17,13 +17,18 @@ export class Generator {
 
     }
     public async generate() {
-        const  hdrData = await this.generateHdr();
-        this.config.templates.map(async val=>{
-            const template =  await this.readTemplate(val);
-            const render =  Handlebars.compile(template);
+        const hdrData = await this.generateHdr();
+        this.config.templates.map(async val => {
+            const template = await this.readTemplate(val);
+            const render = Handlebars.compile(template);
             const handlebarFile = render(hdrData);
+            // console.log(handlebarFile);
         })
-        this.handlebarHelper();
+            // const template = await this.readTemplate(this.config.templates[0]);
+            // const render = Handlebars.compile(template);
+             this.handlebarHelper();
+            // const handlebarFile = render(hdrData);
+            // console.log(handlebarFile);
     }
 
     async createFolder(dirPath: string): Promise<boolean> {
@@ -58,8 +63,6 @@ export class Generator {
         // 字段注视解析
         const table = dbInfo.tables[0];
         hdr.table.tableName = Inflected.classify(table.tableName);
-        hdr.table.tableNameLower = FormatUtils.toTileCase(hdr.table.tableName);
-        hdr.table.tableNamePluralize = Inflected.pluralize(hdr.table.tableName);
         hdr.table.actualTableName = table.tableName;
         hdr.table.schema = table.tableSchema;
         hdr.table.catalog = table.tableCatalog;
@@ -72,67 +75,47 @@ export class Generator {
             hdrColumn.actualColumnName = column.columnName;
             hdrColumn.columnDef = column.columnDefault;
             hdrColumn.columnName = Inflected.classify(column.columnName);
-            hdrColumn.columnNameLower = hdrColumn.columnName.toLocaleLowerCase();
-            hdrColumn.columnNameUpper = FormatUtils.toUpperCase(hdrColumn.columnName);
             hdrColumn.remarks = column.columnComment;
+            hdrColumn.nullable = column.isNullable;
+            hdrColumn.columnSize = column.characterMaximumLength;
+            hdrColumn.charOctetLength = column.characterOctetLength;
+            hdrColumn.typeName = column.dataType;
+            hdrColumn.columnKey = column.columnKey;
             hdrColumns.push(hdrColumn);
         });
-
         hdr.table.allColumns = hdrColumns;
+        // console.log(dbInfo);
         return hdr;
     }
     private handlebarHelper() {
         Handlebars.registerHelper({
-            eq: function (v1, v2) {
+            eq: (v1, v2) => {
                 return v1 === v2;
             },
-            ne: function (v1, v2) {
+            ne: (v1, v2) => {
                 return v1 !== v2;
             },
-            lt: function (v1, v2) {
+            lt: (v1, v2) => {
                 return v1 < v2;
             },
-            gt: function (v1, v2) {
+            gt: (v1, v2) => {
                 return v1 > v2;
             },
-            lte: function (v1, v2) {
+            lte: (v1, v2) => {
                 return v1 <= v2;
             },
-            gte: function (v1, v2) {
+            gte: (v1, v2) => {
                 return v1 >= v2;
             },
-            and: function () {
+            and: () => {
                 return Array.prototype.slice.call(arguments, 0, arguments.length - 1).every(Boolean);
             },
-            or: function () {
+            or: () => {
                 return Array.prototype.slice.call(arguments, 0, arguments.length - 1).some(Boolean);
+            },
+            inc: (v1)=>{
+                return parseInt(v1) + 1;
             }
         });
-        // Handlebars.registerHelper('ifCond', function (v1, operator, v2, options: Handlebars.HelperOptions) {
-        //     switch (operator) {
-        //         case '==':
-        //             return (v1 == v2) ? options.fn(this) : options.inverse(this);
-        //         case '===':
-        //             return (v1 === v2) ? options.fn(this) : options.inverse(this);
-        //         case '!=':
-        //             return (v1 != v2) ? options.fn(this) : options.inverse(this);
-        //         case '!==':
-        //             return (v1 !== v2) ? options.fn(this) : options.inverse(this);
-        //         case '<':
-        //             return (v1 < v2) ? options.fn(this) : options.inverse(this);
-        //         case '<=':
-        //             return (v1 <= v2) ? options.fn(this) : options.inverse(this);
-        //         case '>':
-        //             return (v1 > v2) ? options.fn(this) : options.inverse(this);
-        //         case '>=':
-        //             return (v1 >= v2) ? options.fn(this) : options.inverse(this);
-        //         case '&&':
-        //             return (v1 && v2) ? options.fn(this) : options.inverse(this);
-        //         case '||':
-        //             return (v1 || v2) ? options.fn(this) : options.inverse(this);
-        //         default:
-        //             return options.inverse(this);
-        //     }
-        // });
     }
 }

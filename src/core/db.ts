@@ -20,7 +20,7 @@ export default class DB {
     });
   }
 
-  public query(sql: string, values?: any): Promise<any> {
+  private query(sql: string, values?: any): Promise<any> {
     return new Promise((resolve, reject) => {
       this.pool.getConnection(function (err, connection) {
         if (err) {
