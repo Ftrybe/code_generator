@@ -42,7 +42,7 @@ export class DbUtils {
 
     public static convertShortJavaType(type: string) {
         const javaType = this.convertJavaType(type);
-        const shortName =  javaType.substring(javaType.lastIndexOf(","));
+        const shortName =  javaType.substring(javaType.lastIndexOf(".")+1);
         return shortName;
     }
 }

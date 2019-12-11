@@ -1,8 +1,7 @@
 package {{prop.entityPackageName}};
 {{#each table.importList}}
-import {{this}}
+import {{this}};
 {{/each}}
-
 import {{prop.baseEntityPackageName}}.BaseEntity;
 import com.ftrybe.tourismend.core.validator.groups.DefaultGroup;
 import io.swagger.annotations.ApiModel;

@@ -1,11 +1,8 @@
 package {{prop.entityPackageName}};
 {{#each table.importList}}
-import {{this}}
+import {{this}};
 {{/each}}
-
-
 import {{prop.baseEntityPackageName}}.BaseEntity;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

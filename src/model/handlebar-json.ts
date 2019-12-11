@@ -59,6 +59,17 @@ export class HandlebarsTable {
         return baseColumns;
     }
 
+    get importList():Array<string>{
+        let importList = new Array<string>();
+        this.allColumns.forEach(col=>{
+            if(!col.javaTypeName.includes("java.lang")){
+                if(!importList.includes(col.javaTypeName)){
+                    importList.push(col.javaTypeName);
+                }
+            }
+        })
+        return importList;
+    }
 }
 
 export class HandlebarsColumn {

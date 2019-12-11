@@ -2,7 +2,6 @@ import * as fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import * as Inflected from 'inflected';
 import { parse } from 'path';
-
 import { Config } from '../model/config';
 import { HandlebarJson, HandlebarsColumn } from '../model/handlebar-json';
 import { Template } from '../model/template';
@@ -14,7 +13,6 @@ export class Generator {
     config: Config;
     constructor(config: Config) {
         this.config = config;
-
     }
     public async generate() {
         const hdrData = await this.generateHdr();
@@ -23,17 +21,8 @@ export class Generator {
             const render = Handlebars.compile(template);
             const handlebarFile = render(hdrData);
             await this.generateFile(tpl,handlebarFile,hdrData.table.tableName);
-        })
+        });
         this.handlebarHelper();
-    }
-
-    private async createFolder(dirPath: string): Promise<boolean> {
-        const isExist = await fs.pathExists(dirPath);
-        if (isExist) {
-            return false;
-        }
-        await fs.mkdirs(dirPath);
-        return true;
     }
 
     private async generateFile(tpl: Template,data:string,tableName:string) {
@@ -52,8 +41,16 @@ export class Generator {
     private async write(filePath: string,data:string) {
         const path = parse(filePath);
         await this.createFolder(path.dir);
-        // await fs.createFile(filePath);
         await fs.outputFile(filePath,data);
+    }
+
+    private async createFolder(dirPath: string): Promise<boolean> {
+        const isExist = await fs.pathExists(dirPath);
+        if (isExist) {
+            return false;
+        }
+        await fs.mkdirs(dirPath);
+        return true;
     }
 
     async readTemplate(tplFileName: string): Promise<string> {
