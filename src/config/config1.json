@@ -7,8 +7,8 @@
         "port": 3306
     },
     "project": {
-        "baseTargetJavaDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/java",
-        "baseTargetResourcesDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/resources",
+        "baseTargetJavaDirectory": "D:/IdeaProject/test/atom-portal/atom-portal-web/src/main/java",
+        "baseTargetResourcesDirectory": "D:/IdeaProject/test/atom-portal/atom-portal-web/src/main/resources",
         "mapperXmlResourcesDirectory": "mappings/sys",
         "packageName": "com.silverdata.atom.portal.sys",
         "javaDirectory": "com/silverdata/atom/portal/sys",

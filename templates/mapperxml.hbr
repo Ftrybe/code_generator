@@ -18,9 +18,7 @@
 
 	<sql id="baseColumnList">
 		{{!-- 字段  --}}
-		{{#each table.allColumns}}
-		{{#with this}}a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with}}
-		{{/each}}
+		{{#each table.allColumns}} {{#with this}}a.{{actualColumnName}}{{#if @last}}{{else}},{{~/if~}}{{/with~}} {{/each}}
 	</sql>
 
 	<sql id="dynamicWhere">
@@ -34,9 +32,9 @@
 					(eq javaTypeShortName "String")
 					(ne columnNameLower "delFlag")
 			)}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{columnNameLower}} }</if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
 			{{else if (ne columnNameLower "delFlag")}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}} =#{ {{columnNameLower}} }</if>
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}} =#{ {{~columnNameLower~}} }</if>
 			{{/if}}
 			{{/with}}
 			{{/each}}
@@ -51,16 +49,15 @@
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index != 0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{columnNameLower}} }
+		{{#if (eq test "column_index != 0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{~columnNameLower~}} }
 		{{/with}}
 		{{/each}}
-		<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
-			AND a.del_flag = '0'
-		</#if>
+		{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+		AND a.del_flag = '0'
+		{{/if}}
 	</select>
 
-	<select id="getByDynamicWhere" parameterType="{{prop.entityPackageName}}.{{table.tableName}}"
-		resultMap="baseResultMap">
+	<select id="getByDynamicWhere" parameterType="{{prop.entityPackageName}}.{{table.tableName}}" resultMap="baseResultMap">
 		select
 		<include refid="baseColumnList" />
 		FROM {{table.actualTableName}} a
@@ -75,29 +72,18 @@
 	</select>
 
 	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
-		insert into {{table.actualTableName}}(
-		{{!-- 字段 --}}
-		{{#each table.allColumns}}
-		{{#with this}}
-		a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-		{{/with}}
-		{{/each}}
-		)values(
-		{{!-- 字段 --}}
-		{{~#each table.allColumns}}
-		{{#with this}}
-		#{ {{columnNameLower}},jdbcType={{jdbcTypeName}}
-		}
-		{{#if columnNameLower}},{{/if}}
-		{{/with}}
-		{{/each}}
-		)
+		insert into {{table.actualTableName~}}({{~#each table.allColumns ~}}
+		{{~#with this}} a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with~}}
+		{{~/each~}})
+		values
+		({{~#each table.allColumns~}}
+		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}},{{/if}}{{/with~}}
+		{{~/each~}})
 	</insert>
 
 	<update id="update" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
 		UPDATE {{table.actualTableName}} SET
-		{{!-- 非主键列，非blob列 --}}
-		{{#each table.baseColumns}}
+		{{~#each table.baseColumns}}
 		{{#with this}}
 		{{#if (and 
 					(ne columnNameLower "createId")
@@ -106,198 +92,124 @@
 			)}}
 		{{~#if first}},{{/if}}
 		{{actualColumnName}}=#{
-		{{columnNameLower}},jdbcType={{jdbcTypeName}} }
-		}
-		{{/if}}
+		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{~/if}}
 		{{/with}}
 		{{/each}}
+
 		WHERE
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index != 0")}} AND {{/if}}{{actualColumnName}}=#{
-		{{column.columnNameLower}} }
-		{{#if @last}}{{else}},{{/if}}
+		{{#if (eq test "column_index != 0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
-
 	</update>
 
 	<update id="updateSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
 		UPDATE {{table.actualTableName}}
 		<set>
-			{{!-- 非主键列，非blob列 --}}
-			{{#each table.allColumns}}
+			{{#each table.baseColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
+			{{#if (or (eq columnNameLower "updateId") (eq columnNameLower "updateTime"))}}
+			{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName}},
+			{{/if}}
 			{{/with}}
 			{{/each}}
-			<#list table.baseColumns as ucolumn>
-				<#if ucolumn.columnNameLower=="updateId" || ucolumn.columnNameLower=="updateTime">
-					{{ucolumn.actualColumnName}}=<#noparse>#{</#noparse>
-					{{ucolumn.columnNameLower}},jdbcType={{ucolumn.jdbcTypeInformation.jdbcTypeName}}<#noparse>},
-					</#noparse>
-				</#if>
-			</#list>
-			{{#each table.allColumns}}
+			{{#each table.baseColumns}}
 			{{#with this}}
-			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
+			{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			{{else}}
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			{{/if}}
+			{{/if}}
 			{{/with}}
 			{{/each}}
-			<#list table.baseColumns as column>
-				<#if column.columnNameLower !="createId" && column.columnNameLower !="createTime" &&
-					column.columnNameLower !="delFlag" && column.columnNameLower !="updateId" && column.columnNameLower
-					!="updateTime">
-					<#if (column.javaTypeShortName=="String" )>
-						<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{column.columnNameLower}})">
-							{{column.actualColumnName}}=<#noparse>#{</#noparse>
-							{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}<#noparse>}
-							</#noparse>,</if>
-						<#else>
-							<if
-								test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{column.columnNameLower}})">
-								{{column.actualColumnName}}=<#noparse>#{</#noparse>
-								{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}
-								<#noparse>}</#noparse>,</if>
-					</#if>
-				</#if>
-			</#list>
 		</set>
 		WHERE
 		{{!-- 主键字段 --}}
-		{{#each table.allColumns}}
+		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
+		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}}
+		}{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
-		<#list table.primaryKeyColumns as column>
-			<#if test="column_index != 0"> AND </#if>{{column.actualColumnName}}=<#noparse>#{</#noparse>
-			{{column.columnNameLower}}<#noparse>}</#noparse>
-			<#if @last>,</#if>
-		</#list>
 	</update>
+	{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+	<update id="delete" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}} SET
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (or (eq columnNameLower "updateId") (eq columnNameLower "updateTime"))}}
+		{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		del_flag = '1'
+		WHERE
+		{{!-- <#-- 主键字段--> --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{/with}}
+		{{/each}}
+	</update>
+	{{else}}
+	<delete id="delete">
+		DELETE FROM {{table.actualTableName}}
+		WHERE
+		{{!-- <#-- 主键字段--> --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{/with}}
+		{{/each}}
+	</delete>
+	{{/if}}
 
-	<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
-		<update id="delete" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
-			UPDATE {{table.actualTableName}} SET
-			{{#each table.allColumns}}
-			{{#with this}}
-			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-			{{/with}}
-			{{/each}}
-			<#list table.baseColumns as column>
-				<#if column.columnNameLower=="updateId" || column.columnNameLower=="updateTime">
-					{{column.actualColumnName}}=<#noparse>#{</#noparse>
-					{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}<#noparse>}
-					</#noparse>,
-				</#if>
-			</#list>
-			del_flag = '1'
-			WHERE
-			{{!-- <#-- 主键字段--> --}}
-			{{#each table.allColumns}}
-			{{#with this}}
-			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-			{{/with}}
-			{{/each}}
-			<#list table.primaryKeyColumns as column>
-				<#if test="column_index != 0"> AND </#if>{{column.actualColumnName}}<#noparse>=#{</#noparse>
-				{{column.columnNameLower}}<#noparse>}</#noparse>
-			</#list>
-		</update>
-		<#else>
-			<delete id="delete">
-				DELETE FROM {{table.actualTableName}}
-				WHERE
-				{{!-- <#-- 主键字段--> --}}
-				{{#each table.allColumns}}
-				{{#with this}}
-				a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-				{{/with}}
-				{{/each}}
-				<#list table.primaryKeyColumns as column>
-					<#if test="column_index != 0"> AND </#if>{{column.actualColumnName}}<#noparse>=#{</#noparse>
-					{{column.columnNameLower}}<#noparse>}</#noparse>
-				</#list>
-			</delete>
-	</#if>
-
-	<#if (table.allColumnNameLowers?seq_contains("delFlag"))>
-		<update id="deleteSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
-			UPDATE {{table.actualTableName}} SET
-			{{#each table.allColumns}}
-			{{#with this}}
-			a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-			{{/with}}
-			{{/each}}
-			<#list table.baseColumns as column>
-				<#if column.columnNameLower=="updateId" || column.columnNameLower=="updateTime">
-					{{column.actualColumnName}}=<#noparse>#{</#noparse>
-					{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}<#noparse>}
-					</#noparse>,
-				</#if>
-			</#list>
-			del_flag = '1'
-			<where>
-				{{#each table.allColumns}}
-				{{#with this}}
-				a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-				{{/with}}
-				{{/each}}
-				<#list table.baseColumns as column>
-					<#if column.columnNameLower !="createId" && column.columnNameLower !="createTime" &&
-						column.columnNameLower !="delFlag" && column.columnNameLower !="updateId" &&
-						column.columnNameLower !="updateTime">
-						<#if (column.javaTypeShortName=="String" )>
-							<if
-								test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{column.columnNameLower}})">
-								AND {{column.actualColumnName}}=<#noparse>#{</#noparse>
-								{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}
-								<#noparse>}</#noparse>
-							</if>
-							<#else>
-								<if
-									test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{column.columnNameLower}})">
-									AND {{column.actualColumnName}}=<#noparse>#{</#noparse>
-									{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}
-									<#noparse>}</#noparse>
-								</if>
-						</#if>
-					</#if>
-				</#list>
-			</where>
-		</update>
-		<#else>
-			<delete id="deleteSelective">
-				DELETE FROM {{table.actualTableName}}
-				<where>
-					{{#each table.allColumns}}
-					{{#with this}}
-					a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}
-					{{/with}}
-					{{/each}}
-					<#list table.baseColumns as column>
-						<#if column.columnNameLower !="createId" && column.columnNameLower !="createTime" &&
-							column.columnNameLower !="delFlag" && column.columnNameLower !="updateId" &&
-							column.columnNameLower !="updateTime">
-							<#if (column.javaTypeShortName=="String" )>
-								<if
-									test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{column.columnNameLower}})">
-									AND {{column.actualColumnName}}=<#noparse>#{</#noparse>
-									{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}
-									<#noparse>}</#noparse>
-								</if>
-								<#else>
-									<if
-										test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{column.columnNameLower}})">
-										AND {{column.actualColumnName}}=<#noparse>#{</#noparse>
-										{{column.columnNameLower}},jdbcType={{column.jdbcTypeInformation.jdbcTypeName}}
-										<#noparse>}</#noparse>
-									</if>
-							</#if>
-						</#if>
-					</#list>
-				</where>
-			</delete>
-	</#if>
+	{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+	<update id="deleteSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}} SET
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (or (eq columnNameLower "updateId") (eq columnNameLower "updateTime"))}}
+		{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		del_flag = '1'
+		<where>
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
+		{{#if (eq javaTypeShortName "String")}}
+		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		{{else}}
+		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		{{/if}}
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		</where>
+	</update>
+	{{else}}
+	<delete id="deleteSelective">
+		DELETE FROM {{table.actualTableName}}
+		<where>
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
+		{{#if (eq javaTypeShortName "String")}}
+		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		{{else}}
+		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		{{/if}}
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		</where>
+	</delete>
+	{{/if}}
 </mapper>

@@ -23,7 +23,7 @@ export class HandlebarsTable {
     //表名的复数
     // tableNamePluralize: string;
 
-    baseColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
+    // baseColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
     allColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
 
     blobColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
@@ -52,6 +52,11 @@ export class HandlebarsTable {
         let primaryKeyColumns = new Array<HandlebarsColumn>();
         primaryKeyColumns = this.allColumns.filter(column => column.columnKey === "PRI");
         return primaryKeyColumns;
+    }
+    get baseColumns(): Array<HandlebarsColumn>{
+        let baseColumns = new Array<HandlebarsColumn>();
+        baseColumns = this.allColumns.filter(column => column.columnKey != "PRI");
+        return baseColumns;
     }
 
 }
@@ -119,5 +124,9 @@ export class HandlebarsColumn {
     //  *
     get javaTypeName(): string {
         return this.typeName ? DbUtils.convertJavaType(this.typeName) : null;
+    }
+    
+    get jdbcTypeName():string{
+        return this.typeName.toLocaleUpperCase();
     }
 }

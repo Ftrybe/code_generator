@@ -18,20 +18,16 @@ export class Generator {
     }
     public async generate() {
         const hdrData = await this.generateHdr();
-        this.config.templates.map(async val => {
-            const template = await this.readTemplate(val);
+        this.config.templates.map(async tpl => {
+            const template = await this.readTemplate(tpl.tplFile);
             const render = Handlebars.compile(template);
             const handlebarFile = render(hdrData);
-            // console.log(handlebarFile);
+            await this.generateFile(tpl,handlebarFile,hdrData.table.tableName);
         })
-            // const template = await this.readTemplate(this.config.templates[0]);
-            // const render = Handlebars.compile(template);
-             this.handlebarHelper();
-            // const handlebarFile = render(hdrData);
-            // console.log(handlebarFile);
+        this.handlebarHelper();
     }
 
-    async createFolder(dirPath: string): Promise<boolean> {
+    private async createFolder(dirPath: string): Promise<boolean> {
         const isExist = await fs.pathExists(dirPath);
         if (isExist) {
             return false;
@@ -40,17 +36,28 @@ export class Generator {
         return true;
     }
 
-    creatFile(fileName: string) {
-
+    private async generateFile(tpl: Template,data:string,tableName:string) {
+        const fileNamePrefix = tpl.fileNamePrefix? FormatUtils.toUpperCase(tpl.fileNamePrefix):""; 
+        const fileNameSuffix = tpl.fileNameSuffix?FormatUtils.toUpperCase(tpl.fileNameSuffix):"";
+        const fileName = fileNamePrefix + FormatUtils.toUpperCase(tableName) + fileNameSuffix + "."+tpl.fileType;
+        const filePath = PathUtils.join(tpl.targetDirectory,fileName);
+        try {
+            this.write(filePath,data);
+        } catch (error) {
+            console.error("创建错误",error)
+        }
+        console.log(fileName+"生成成功");
     }
 
-    write(filePath: string, data: any) {
+    private async write(filePath: string,data:string) {
         const path = parse(filePath);
-        this.createFolder(path.dir);
+        await this.createFolder(path.dir);
+        // await fs.createFile(filePath);
+        await fs.outputFile(filePath,data);
     }
 
-    async readTemplate(template: Template): Promise<string> {
-        const templateDir = PathUtils.join(PathUtils.getRootDir(), "templates", template.tplFile);
+    async readTemplate(tplFileName: string): Promise<string> {
+        const templateDir = PathUtils.join(PathUtils.getRootDir(), "templates",tplFileName);
         return await fs.readFile(templateDir, "utf8");
     }
 
@@ -113,8 +120,15 @@ export class Generator {
             or: () => {
                 return Array.prototype.slice.call(arguments, 0, arguments.length - 1).some(Boolean);
             },
-            inc: (v1)=>{
+            inc: (v1) => {
                 return parseInt(v1) + 1;
+            },
+            seq_contains: (v1: Array<string>, v2: string) => {
+                v1.forEach(val => {
+                    if (val == v2)
+                        return true;
+                })
+                return false;
             }
         });
     }
