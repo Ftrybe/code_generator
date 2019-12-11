@@ -2,12 +2,14 @@ import * as fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import * as Inflected from 'inflected';
 import { parse } from 'path';
-import { Config } from '../model/config';
+import { Config, TableConfig } from '../model/config';
 import { HandlebarJson, HandlebarsColumn } from '../model/handlebar-json';
 import { Template } from '../model/template';
 import { FormatUtils } from '../utils/format.utils.ts';
 import { PathUtils } from '../utils/path.utils';
 import DB from './db';
+import { Table } from '../model/table';
+import { Column } from '../model/column';
 
 export class Generator {
     config: Config;
@@ -15,13 +17,17 @@ export class Generator {
         this.config = config;
     }
     public async generate() {
-        const hdrData = await this.generateHdr();
-        this.config.templates.map(async tpl => {
-            const template = await this.readTemplate(tpl.tplFile);
-            const render = Handlebars.compile(template);
-            const handlebarFile = render(hdrData);
-            await this.generateFile(tpl,handlebarFile,hdrData.table.tableName);
-        });
+        const db = new DB(this.config);
+        const tables = await db.getDBData();
+        tables.forEach(async table=>{
+            const hdrData = await this.generateHdr(table);
+            this.config.templates.map(async tpl => {
+                const template = await this.readTemplate(tpl.tplFile);
+                const render = Handlebars.compile(template);
+                const handlebarFile = render(hdrData);
+                await this.generateFile(tpl,handlebarFile,hdrData.table.tableName);
+            });
+        })
         this.handlebarHelper();
     }
 
@@ -58,34 +64,31 @@ export class Generator {
         return await fs.readFile(templateDir, "utf8");
     }
 
-    private async generateHdr(): Promise<HandlebarJson> {
-        const db = new DB(this.config);
-        const dbInfo = await db.getDBData();
+    private async generateHdr(table:Table): Promise<HandlebarJson> {
         const hdr = new HandlebarJson();
+        const  columns:Column[] = table.columns;
         // 包名,目录等配置
         hdr.prop = this.config.project;
         // 字段注视解析
-        const table = dbInfo.tables[0];
         hdr.table.tableName = Inflected.classify(table.tableName);
         hdr.table.actualTableName = table.tableName;
         hdr.table.schema = table.tableSchema;
         hdr.table.catalog = table.tableCatalog;
         hdr.table.remarks = table.tableComment;
 
-        const columns = dbInfo.columns;
         const hdrColumns = new Array<HandlebarsColumn>();
         columns.map((column, index, array) => {
-            const hdrColumn = new HandlebarsColumn();
-            hdrColumn.actualColumnName = column.columnName;
-            hdrColumn.columnDef = column.columnDefault;
-            hdrColumn.columnName = Inflected.classify(column.columnName);
-            hdrColumn.remarks = column.columnComment;
-            hdrColumn.nullable = column.isNullable;
-            hdrColumn.columnSize = column.characterMaximumLength;
-            hdrColumn.charOctetLength = column.characterOctetLength;
-            hdrColumn.typeName = column.dataType;
-            hdrColumn.columnKey = column.columnKey;
-            hdrColumns.push(hdrColumn);
+                const hdrColumn = new HandlebarsColumn();
+                hdrColumn.actualColumnName = column.columnName;
+                hdrColumn.columnDef = column.columnDefault;
+                hdrColumn.columnName = Inflected.classify(column.columnName);
+                hdrColumn.remarks = column.columnComment;
+                hdrColumn.nullable = column.isNullable;
+                hdrColumn.columnSize = column.characterMaximumLength;
+                hdrColumn.charOctetLength = column.characterOctetLength;
+                hdrColumn.typeName = column.dataType;
+                hdrColumn.columnKey = column.columnKey;
+                hdrColumns.push(hdrColumn);
         });
         hdr.table.allColumns = hdrColumns;
         // console.log(dbInfo);

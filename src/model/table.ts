@@ -1,4 +1,5 @@
 import { Expose } from "class-transformer";
+import { Column } from "./column";
 
 export class Table {
     @Expose({name:"TABLE_CATALOG"})
@@ -64,4 +65,5 @@ export class Table {
     @Expose({name:"TABLE_COMMENT"})
     tableComment: string;
 
+    columns:Column[] = new Array<Column>();
 }

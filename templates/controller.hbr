@@ -84,7 +84,6 @@ public class {{table.tableName}}Controller extends BaseController {
     */
     @ApiOperation(value = "修改{{table.remarks}}",notes = "修改{{table.remarks}}数据",position = 30)
     @PutMapping("/{{table.tableNamePluralize}}")
-    @RequiresPermissions("{{table.permissions}}:update")
     public AjaxResponse update(@Validated({DefaultGroup.class,EditGroup.class}) {{table.tableName}} {{table.tableNameLower}}){
         {{table.tableNameLower}}Service.update({{table.tableNameLower}});
         return AjaxResponse.success("修改成功");
@@ -97,7 +96,6 @@ public class {{table.tableName}}Controller extends BaseController {
     */
     @ApiOperation(value = "动态修改{{table.remarks}}",notes = "常用于更新个别字段，比如审核状态、数据状态等",position = 31)
     @PutMapping("/{{table.tableNameSelectivePluralize}}")
-    @RequiresPermissions("{{table.permissions}}:state")
     public AjaxResponse updateSelective({{table.tableName}} {{table.tableNameLower}}){
         {{table.tableNameLower}}Service.updateSelective({{table.tableNameLower}});
         return AjaxResponse.success("操作成功");
@@ -111,7 +109,6 @@ public class {{table.tableName}}Controller extends BaseController {
     @ApiOperation(value = "删除{{table.remarks}}",notes = "根据ID删除{{table.remarks}}",position = 50)
     @ApiImplicitParam(name = "id", value = "{{table.remarks}}ID", required = true, dataType = "long", paramType = "path")
     @DeleteMapping("/{{table.tableNamePluralize}}/{id}")
-    @RequiresPermissions("{{table.permissions}}:delete")
     public AjaxResponse delete(@PathVariable("id") Long id){
         {{table.tableNameLower}}Service.delete(id);
         return AjaxResponse.success("删除成功");
