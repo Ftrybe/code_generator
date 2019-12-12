@@ -64,8 +64,8 @@ export default class DB {
     Object.values(table).map(tableV => {
       const resultTable = plainToClass(Table, tableV);
       Object.values(columns).map((columnV: Column, index) => {
-        if (columnV.tableName == resultTable.tableName) {
-          const col = plainToClass(Column, columnV);
+        const col = plainToClass(Column, columnV);
+        if (col.tableName == resultTable.tableName) {
           resultTable.columns.push(col);
         }
       });

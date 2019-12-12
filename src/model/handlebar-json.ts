@@ -118,7 +118,7 @@ export class HandlebarsColumn {
         return FormatUtils.toUpperCase(this.columnName);
     }
     get columnNameLower(): string {
-        return this.columnName.toLocaleLowerCase();
+        return FormatUtils.toCamelCase(this.actualColumnName.toLocaleLowerCase());
     }
 
     /**

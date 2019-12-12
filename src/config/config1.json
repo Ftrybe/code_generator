@@ -1,10 +1,10 @@
 {
     "mysql": {
-        "user": "root",
-        "password": "admin",
-        "database": "note",
-        "host": "localhost",
-        "port": 3306
+        "user": "zhgd",
+        "password": "zhgd123",
+        "database": "zhgd",
+        "host": "10.0.0.103",
+        "port": 3307
     },
     "project": {
         "baseTargetJavaDirectory": "D:/IdeaProject/test/atom-portal/atom-portal-web/src/main/java",
@@ -73,10 +73,10 @@
         }
     ],
     "table": {
-        "schema": "note",
+        "schema": "zhgd",
         "forceBigDecimals": "",
         "containsView": "",
         "exclude": "",
-        "include": "sys_express,sys_diary"
+        "include": "material_dir"
     }
 }

@@ -17,27 +17,23 @@
 	</resultMap>
 
 	<sql id="baseColumnList">
-		{{!-- 字段  --}}
 		{{#each table.allColumns}} {{#with this}}a.{{actualColumnName}}{{#if @last}}{{else}},{{~/if~}}{{/with~}} {{/each}}
 	</sql>
 
 	<sql id="dynamicWhere">
 		<where>
-			{{#each table.allColumns}}
-			{{#with this}}
-			{{#if (eq columnNameLower "delFlag")}}
-			AND a.del_flag = '0'
-			{{/if}}
-			{{#if (and 
-					(eq javaTypeShortName "String")
-					(ne columnNameLower "delFlag")
-			)}}
+		{{#each table.allColumns}}{{#with this}}
+		{{#if (eq columnNameLower "delFlag")}}
+		AND a.del_flag = '0'
+		{{~/if~}} 
+		{{#if (and (eq javaTypeShortName "String") (ne columnNameLower "delFlag"))}}
 			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
-			{{else if (ne columnNameLower "delFlag")}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}} =#{ {{~columnNameLower~}} }</if>
-			{{/if}}
-			{{/with}}
-			{{/each}}
+		{{~else if (ne columnNameLower "delFlag")}}
+			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
+		{{~/if~}}
+		{{/with}}
+		{{/each}}
+		
 		</where>
 	</sql>
 
@@ -49,7 +45,7 @@
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index != 0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{#if (eq @index "0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{~columnNameLower~}} }
 		{{/with}}
 		{{/each}}
 		{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
@@ -101,7 +97,7 @@
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index != 0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }{{#if @last}}{{else}},{{/if}}
+		{{#if (ne @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
 	</update>
@@ -132,7 +128,7 @@
 		{{!-- 主键字段 --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}}
+		{{#if (ne @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}}
 		}{{#if @last}}{{else}},{{/if}}
 		{{/with}}
 		{{/each}}
@@ -152,7 +148,7 @@
 		{{!-- <#-- 主键字段--> --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{#if (eq @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
 		{{/with}}
 		{{/each}}
 	</update>
@@ -163,7 +159,7 @@
 		{{!-- <#-- 主键字段--> --}}
 		{{#each table.primaryKeyColumns}}
 		{{#with this}}
-		{{#if (eq test "column_index!=0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{#if (eq @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
 		{{/with}}
 		{{/each}}
 	</delete>

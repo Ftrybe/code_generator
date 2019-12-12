@@ -19,35 +19,35 @@ export class Generator {
     public async generate() {
         const db = new DB(this.config);
         const tables = await db.getDBData();
-        tables.forEach(async table=>{
+        tables.forEach(async table => {
             const hdrData = await this.generateHdr(table);
             this.config.templates.map(async tpl => {
                 const template = await this.readTemplate(tpl.tplFile);
                 const render = Handlebars.compile(template);
                 const handlebarFile = render(hdrData);
-                await this.generateFile(tpl,handlebarFile,hdrData.table.tableName);
+                await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
             });
         })
         this.handlebarHelper();
     }
 
-    private async generateFile(tpl: Template,data:string,tableName:string) {
-        const fileNamePrefix = tpl.fileNamePrefix? FormatUtils.toUpperCase(tpl.fileNamePrefix):""; 
-        const fileNameSuffix = tpl.fileNameSuffix?FormatUtils.toUpperCase(tpl.fileNameSuffix):"";
-        const fileName = fileNamePrefix + FormatUtils.toUpperCase(tableName) + fileNameSuffix + "."+tpl.fileType;
-        const filePath = PathUtils.join(tpl.targetDirectory,fileName);
+    private async generateFile(tpl: Template, data: string, tableName: string) {
+        const fileNamePrefix = tpl.fileNamePrefix ? FormatUtils.toUpperCase(tpl.fileNamePrefix) : "";
+        const fileNameSuffix = tpl.fileNameSuffix ? FormatUtils.toUpperCase(tpl.fileNameSuffix) : "";
+        const fileName = fileNamePrefix + FormatUtils.toUpperCase(tableName) + fileNameSuffix + "." + tpl.fileType;
+        const filePath = PathUtils.join(tpl.targetDirectory, fileName);
         try {
-            this.write(filePath,data);
+            this.write(filePath, data);
         } catch (error) {
-            console.error("创建错误",error)
+            console.error("创建错误", error)
         }
-        console.log(fileName+"生成成功");
+        console.log(fileName + "生成成功");
     }
 
-    private async write(filePath: string,data:string) {
+    private async write(filePath: string, data: string) {
         const path = parse(filePath);
         await this.createFolder(path.dir);
-        await fs.outputFile(filePath,data);
+        await fs.outputFile(filePath, data);
     }
 
     private async createFolder(dirPath: string): Promise<boolean> {
@@ -60,13 +60,13 @@ export class Generator {
     }
 
     async readTemplate(tplFileName: string): Promise<string> {
-        const templateDir = PathUtils.join(PathUtils.getRootDir(), "templates",tplFileName);
+        const templateDir = PathUtils.join(PathUtils.getRootDir(), "templates", tplFileName);
         return await fs.readFile(templateDir, "utf8");
     }
 
-    private async generateHdr(table:Table): Promise<HandlebarJson> {
+    private async generateHdr(table: Table): Promise<HandlebarJson> {
         const hdr = new HandlebarJson();
-        const  columns:Column[] = table.columns;
+        const columns: Column[] = table.columns;
         // 包名,目录等配置
         hdr.prop = this.config.project;
         // 字段注视解析
@@ -78,52 +78,51 @@ export class Generator {
 
         const hdrColumns = new Array<HandlebarsColumn>();
         columns.map((column, index, array) => {
-                const hdrColumn = new HandlebarsColumn();
-                hdrColumn.actualColumnName = column.columnName;
-                hdrColumn.columnDef = column.columnDefault;
-                hdrColumn.columnName = Inflected.classify(column.columnName);
-                hdrColumn.remarks = column.columnComment;
-                hdrColumn.nullable = column.isNullable;
-                hdrColumn.columnSize = column.characterMaximumLength;
-                hdrColumn.charOctetLength = column.characterOctetLength;
-                hdrColumn.typeName = column.dataType;
-                hdrColumn.columnKey = column.columnKey;
-                hdrColumns.push(hdrColumn);
+            const hdrColumn = new HandlebarsColumn();
+            hdrColumn.actualColumnName = column.columnName;
+            hdrColumn.columnDef = column.columnDefault;
+            hdrColumn.columnName = Inflected.classify(column.columnName);
+            hdrColumn.remarks = column.columnComment;
+            hdrColumn.nullable = column.isNullable;
+            hdrColumn.columnSize = column.characterMaximumLength;
+            hdrColumn.charOctetLength = column.characterOctetLength;
+            hdrColumn.typeName = column.dataType;
+            hdrColumn.columnKey = column.columnKey;
+            hdrColumns.push(hdrColumn);
         });
         hdr.table.allColumns = hdrColumns;
-        // console.log(dbInfo);
         return hdr;
     }
     private handlebarHelper() {
         Handlebars.registerHelper({
-            eq: (v1, v2) => {
+            eq: function (v1, v2) {
                 return v1 === v2;
             },
-            ne: (v1, v2) => {
-                return v1 !== v2;
+            ne: function (v1, v2) {
+                return v1 != v2;
             },
-            lt: (v1, v2) => {
+            lt: function (v1, v2) {
                 return v1 < v2;
             },
-            gt: (v1, v2) => {
+            gt: function (v1, v2) {
                 return v1 > v2;
             },
-            lte: (v1, v2) => {
+            lte: function (v1, v2) {
                 return v1 <= v2;
             },
-            gte: (v1, v2) => {
+            gte: function (v1, v2) {
                 return v1 >= v2;
             },
-            and: () => {
+            and: function () {
                 return Array.prototype.slice.call(arguments, 0, arguments.length - 1).every(Boolean);
             },
-            or: () => {
+            or: function () {
                 return Array.prototype.slice.call(arguments, 0, arguments.length - 1).some(Boolean);
             },
-            inc: (v1) => {
+            inc: function (v1) {
                 return parseInt(v1) + 1;
             },
-            seq_contains: (v1: Array<string>, v2: string) => {
+            seq_contains: function (v1: Array<string>, v2: string) {
                 v1.forEach(val => {
                     if (val == v2)
                         return true;
