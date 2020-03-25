@@ -80,9 +80,9 @@
         "include": ""
     },
     "generate" : {
-        "include": "",
+        "include": "domain.hbr",
         "exclude": "",
-        "filter": false,
+        "filter": true,
         "overwrite": true
     }
 }

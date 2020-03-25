@@ -48,9 +48,16 @@ export default class DB {
       let tableNames: string[] = includeList ? includeList : (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
         tableSchema
       ]));
-
+    
       includeList = tableNames.filter((table:any) => {
-       return !excludeList.includes(table.TABLE_NAME);
+        // excludeList = "user_authority,user"
+        const tableName = table.TABLE_NAME;
+        excludeList.split(",").forEach(val=>{
+          if(val == tableName){
+            return false;
+          }
+        });
+       return true;
       }).map( (v:any)=>{
         return v.TABLE_NAME;
       });
