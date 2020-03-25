@@ -25,7 +25,13 @@ export class Generator {
                 const template = await this.readTemplate(tpl.tplFile);
                 const render = Handlebars.compile(template);
                 const handlebarFile = render(hdrData);
-                await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
+                if(this.config.generate.filter){
+                    if (this.config.generate.include?.includes(tpl.tplFile) && !this.config.generate.exclude?.includes(tpl.tplFile)) {
+                        await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
+                    }
+                }else{
+                    await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
+                }
             });
         })
         this.handlebarHelper();
@@ -41,13 +47,24 @@ export class Generator {
         } catch (error) {
             console.error("创建错误", error)
         }
-        console.log(fileName + "生成成功");
     }
 
     private async write(filePath: string, data: string) {
         const path = parse(filePath);
-        await this.createFolder(path.dir);
-        await fs.outputFile(filePath, data);
+        try {
+            await this.createFolder(path.dir);
+            if(!this.config.generate.overwrite){
+                if(fs.existsSync(filePath)){
+                    console.log("已关闭页面重复写入，跳过路径", filePath,"的文件写入");
+                    return;
+                }
+            }
+            await fs.outputFile(filePath, data);
+            console.log("文件创建成功，路径为", filePath);
+        } catch (error) {
+            console.error(error);
+        }
+
     }
 
     private async createFolder(dirPath: string): Promise<boolean> {

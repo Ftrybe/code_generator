@@ -10,6 +10,8 @@ export class Config {
     templates: Template[];
     // 表配置
     table: TableConfig;
+
+    generate: GenerateConfig;
 }
 export class ProjectConfig {
     //目标根项目路径
@@ -49,4 +51,10 @@ export class TableConfig {
     containsView: string;
     exclude: string;
     include: string;
+}
+export class GenerateConfig{
+    include: string;
+    exclude: string;
+    filter: boolean;
+    overwrite: boolean;
 }

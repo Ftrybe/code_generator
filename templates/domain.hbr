@@ -3,7 +3,7 @@ package {{prop.entityPackageName}};
 import {{this}};
 {{/each}}
 import {{prop.baseEntityPackageName}}.BaseEntity;
-import com.ftrybe.tourismend.core.validator.groups.DefaultGroup;
+import com.ftrybe.staff.core.validator.groups.DefaultGroup;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;

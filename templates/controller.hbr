@@ -1,11 +1,11 @@
 package {{prop.controllerPackageName}};
 
-import com.ftrybe.tourismend.core.validator.groups.AddGroup;
-import com.ftrybe.tourismend.core.validator.groups.DefaultGroup;
-import com.ftrybe.tourismend.core.validator.groups.EditGroup;
-import com.ftrybe.tourismend.core.web.BaseController;
-import com.ftrybe.tourismend.core.web.validate.AjaxResponse;
-import com.ftrybe.tourismend.core.persistence.PageUtils;
+import com.ftrybe.staff.core.validator.groups.AddGroup;
+import com.ftrybe.staff.core.validator.groups.DefaultGroup;
+import com.ftrybe.staff.core.validator.groups.EditGroup;
+import com.ftrybe.staff.core.web.BaseController;
+import com.ftrybe.staff.core.web.validate.AjaxResponse;
+import com.ftrybe.staff.core.persistence.PageUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

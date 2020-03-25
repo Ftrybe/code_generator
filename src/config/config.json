@@ -2,20 +2,20 @@
     "mysql": {
         "user": "root",
         "password": "admin",
-        "database": "note",
+        "database": "staff",
         "host": "127.0.0.1",
         "port": 3306
     },
     "project": {
-        "baseTargetJavaDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/java",
-        "baseTargetResourcesDirectory": "D:/IdeaProject/atom/atom-portal/atom-portal-web/src/main/resources",
+        "baseTargetJavaDirectory": "D:/java/staff/src/main/java",
+        "baseTargetResourcesDirectory": "D:/java/staff/src/main/resources",
         "mapperXmlResourcesDirectory": "mappings/sys",
-        "packageName": "com.silverdata.atom.portal.sys",
-        "javaDirectory": "com/silverdata/atom/portal/sys",
-        "baseEntityPackageName": "com.silverdata.smart.core.persistence",
-        "baseMapperPackageName": "com.silverdata.smart.core.persistence",
-        "baseServicePackageName": "com.silverdata.smart.core.service",
-        "baseServiceImplPackageName": "com.silverdata.smart.core.service",
+        "packageName": "com.ftrybe.staff.sys",
+        "javaDirectory": "com/ftrybe/staff/sys",
+        "baseEntityPackageName": "com.ftrybe.staff.core.persistence",
+        "baseMapperPackageName": "com.ftrybe.staff.core.persistence",
+        "baseServicePackageName": "com.ftrybe.stafft.core.service",
+        "baseServiceImplPackageName": "com.ftrybe.staff.core.service",
         "entityPackageName": "{{project.packageName}}.domain",
         "mapperPackageName": "{{project.packageName}}.mapper",
         "servicePackageName": "{{project.packageName}}.service",
@@ -37,7 +37,7 @@
             "fileType": "java"
         },
         {
-            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/controller",
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/web/controller",
             "fileNamePrefix": "",
             "fileNameSuffix": "Controller",
             "tplFile": "controller.hbr",
@@ -73,10 +73,16 @@
         }
     ],
     "table": {
-        "schema": "note",
+        "schema": "staff",
         "forceBigDecimals": "",
         "containsView": "",
+        "exclude": "user_authority",
+        "include": ""
+    },
+    "generate" : {
+        "include": "",
         "exclude": "",
-        "include": "sys_diary"
+        "filter": false,
+        "overwrite": false
     }
 }

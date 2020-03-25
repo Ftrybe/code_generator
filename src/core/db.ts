@@ -45,13 +45,20 @@ export default class DB {
     let includeList: Array<string> = tableConfig.include ? tableConfig.include.split(",") : null;
     const tableSchema = tableConfig.schema;
     if (excludeList) {
+      console.log("当前生成将排除：",excludeList);
       let tableNames: string[] = includeList ? includeList : (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
         tableSchema
       ]));
-      includeList = tableNames.filter(tableName => {
-        !excludeList.includes(tableName);
-      })
+
+      includeList = tableNames.filter((table:any) => {
+       return !excludeList.includes(table.TABLE_NAME);
+      }).map( (v:any)=>{
+        return v.TABLE_NAME;
+      });
+
+
     }
+    console.log("将生成以下数据库",includeList);
     // includeList
     const table = await this.query("select * from INFORMATION_SCHEMA.TABLES where table_name in (?) and table_schema = ?", [
       includeList, tableSchema

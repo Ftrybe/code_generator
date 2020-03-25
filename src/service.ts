@@ -7,7 +7,7 @@ export default class service {
   constructor() { }
   public start() {
     const configParse: ConfigParse = new ConfigParse();
-    const config = configParse.getConfig("config1.json");
+    const config = configParse.getConfig("config.json");
     
     const generator: Generator = new Generator(config);
     generator.generate();
