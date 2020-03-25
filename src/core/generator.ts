@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 import * as Handlebars from 'handlebars';
 import * as Inflected from 'inflected';
 import { parse } from 'path';
-import { Config, TableConfig } from '../model/config';
+import { Config } from '../model/config';
 import { HandlebarJson, HandlebarsColumn } from '../model/handlebar-json';
 import { Template } from '../model/template';
 import { FormatUtils } from '../utils/format.utils.ts';

@@ -1,10 +1,9 @@
 
 import * as mysql from "mysql";
 import { plainToClass } from "class-transformer";
-import { Column, Columns } from "../model/column";
-import { Config, TableConfig } from "../model/config";
+import { Column } from "../model/column";
+import { Config } from "../model/config";
 import { Table } from "../model/table";
-import { DbData } from "../model/db-data";
 
 export default class DB {
 

@@ -14,7 +14,7 @@
         "javaDirectory": "com/ftrybe/staff/sys",
         "baseEntityPackageName": "com.ftrybe.staff.core.persistence",
         "baseMapperPackageName": "com.ftrybe.staff.core.persistence",
-        "baseServicePackageName": "com.ftrybe.stafft.core.service",
+        "baseServicePackageName": "com.ftrybe.staff.core.service",
         "baseServiceImplPackageName": "com.ftrybe.staff.core.service",
         "entityPackageName": "{{project.packageName}}.domain",
         "mapperPackageName": "{{project.packageName}}.mapper",
@@ -83,6 +83,6 @@
         "include": "",
         "exclude": "",
         "filter": false,
-        "overwrite": false
+        "overwrite": true
     }
 }

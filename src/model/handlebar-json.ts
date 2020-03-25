@@ -1,4 +1,3 @@
-import { Columns } from "./column";
 import { ProjectConfig } from "./config";
 import * as Inflected from 'inflected';
 import { FormatUtils } from '../utils/format.utils.ts'
@@ -53,17 +52,17 @@ export class HandlebarsTable {
         primaryKeyColumns = this.allColumns.filter(column => column.columnKey === "PRI");
         return primaryKeyColumns;
     }
-    get baseColumns(): Array<HandlebarsColumn>{
+    get baseColumns(): Array<HandlebarsColumn> {
         let baseColumns = new Array<HandlebarsColumn>();
         baseColumns = this.allColumns.filter(column => column.columnKey != "PRI");
         return baseColumns;
     }
 
-    get importList():Array<string>{
+    get importList(): Array<string> {
         let importList = new Array<string>();
-        this.allColumns.forEach(col=>{
-            if(!col.javaTypeName.includes("java.lang")){
-                if(!importList.includes(col.javaTypeName)){
+        this.allColumns.forEach(col => {
+            if (!col.javaTypeName.includes("java.lang")) {
+                if (!importList.includes(col.javaTypeName)) {
                     importList.push(col.javaTypeName);
                 }
             }
@@ -136,8 +135,8 @@ export class HandlebarsColumn {
     get javaTypeName(): string {
         return this.typeName ? DbUtils.convertJavaType(this.typeName) : null;
     }
-    
-    get jdbcTypeName():string{
+
+    get jdbcTypeName(): string {
         return this.typeName.toLocaleUpperCase();
     }
 }
