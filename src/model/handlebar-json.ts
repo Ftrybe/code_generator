@@ -28,13 +28,13 @@ export class HandlebarsTable {
     blobColumns: HandlebarsColumn[] = new Array<HandlebarsColumn>();
 
     get tableNameLower(): string {
-        return this.tableName.substring(0, 1).toLocaleLowerCase() + this.tableName.substring(1);
+        return FormatUtils.toLocaleCase(this.tableName); 
     }
     get tableNamePluralize(): string {
-        return Inflected.pluralize(this.tableName);
+        return  FormatUtils.toLocaleCase(Inflected.pluralize(this.tableName));
     }
     get tableNameSelectivePluralize(): string {
-        return Inflected.pluralize(this.tableNameLower + this.tableName);
+        return  FormatUtils.toLocaleCase(Inflected.pluralize(this.tableNameLower + this.tableName));
     }
     get permissions(): string {
         return this.actualTableName.substring(0, this.actualTableName.indexOf("_")).toLowerCase() + ":" + this.actualTableName.substring(this.actualTableName.indexOf("_") + 1).toLowerCase();

@@ -16,4 +16,7 @@ export class FormatUtils {
         public static toHyphensCase(input: string) {
             return input.charAt(0).toLowerCase() + input.substr(1).replace(/[A-Z]+/g, txt => "-" + txt).toLowerCase();
         }
+        public static toLocaleCase(input:string){
+            return input.substring(0, 1).toLocaleLowerCase() + input.substring(1)
+        }
 }

@@ -80,7 +80,7 @@
         "include": ""
     },
     "generate" : {
-        "include": "domain.hbr",
+        "include": "controller.hbr",
         "exclude": "",
         "filter": true,
         "overwrite": true
