@@ -76,13 +76,13 @@
         "schema": "staff",
         "forceBigDecimals": "",
         "containsView": "",
-        "exclude": "user_authority",
-        "include": ""
+        "exclude": "",
+        "include": "user"
     },
     "generate" : {
-        "include": "controller.hbr",
+        "include": "",
         "exclude": "",
-        "filter": true,
+        "filter": false,
         "overwrite": true
     }
 }

@@ -14,8 +14,9 @@ export class DbUtils {
             case "int":
             case "id":
                 return "java.lang.Long";
-            case "tinynt":
+            case "tinyint":
             case "boolean":
+                return "java.lang.Boolean";
             case "smallint":
             case "mediumint":
                 return "java.lang.Integer";
@@ -36,7 +37,7 @@ export class DbUtils {
                 return "java.sql.Time";
             case "datetime":
             case "timestamp":
-                return "java.sql.Timestamp"
+                return "java.sql.Timestamp";
         }
     }
 
