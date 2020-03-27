@@ -60,12 +60,14 @@ export default class DB {
       includeList = tableNames.filter((table:any) => {
         // excludeList = "user_authority,user"
         const tableName = table.TABLE_NAME;
+        let flag = true;
         excludeList.split(",").forEach(val=>{
           if(val == tableName){
-            return false;
+           flag = false;
           }
         });
-       return true;
+
+       return flag;
       }).map( (v:any)=>{
         return v.TABLE_NAME;
       });

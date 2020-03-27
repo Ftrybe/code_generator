@@ -76,11 +76,11 @@
         "schema": "staff",
         "forceBigDecimals": "",
         "containsView": "",
-        "exclude": "",
-        "include": "*"
+        "exclude": "user,authority",
+        "include": ""
     },
     "generate" : {
-        "include": "domain.hbr,mapperxml.hbr",
+        "include": "domain.hbr,domaindto.hbr",
         "exclude": "",
         "filter": true,
         "overwrite": true

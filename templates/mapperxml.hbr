@@ -73,7 +73,7 @@
 		{{~/each~}})
 		values
 		({{~#each table.allColumns~}}
-		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}},{{/if}}{{/with~}}
+		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
 		{{~/each~}})
 	</insert>
 
@@ -88,7 +88,7 @@
 			)}}
 		{{~#if first}},{{/if}}
 		{{actualColumnName}}=#{
-		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} } {{#if @last}}{{else}},{{/if}}
 		{{~/if}}
 		{{/with}}
 		{{/each}}
