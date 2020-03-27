@@ -69,11 +69,11 @@
 
 	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
 		insert into {{table.actualTableName~}}({{~#each table.allColumns ~}}
-		{{~#with this}} a.{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with~}}
+		{{~#with this}} {{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with~}}
 		{{~/each~}})
 		values
 		({{~#each table.allColumns~}}
-		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
+		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}},{{/if}}{{/with~}}
 		{{~/each~}})
 	</insert>
 
@@ -88,7 +88,7 @@
 			)}}
 		{{~#if first}},{{/if}}
 		{{actualColumnName}}=#{
-		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} } {{#if @last}}{{else}},{{/if}}
+		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
 		{{~/if}}
 		{{/with}}
 		{{/each}}
