@@ -101,10 +101,11 @@ export class Generator {
             hdrColumn.columnName = Inflected.classify(column.columnName);
             hdrColumn.remarks = column.columnComment;
             hdrColumn.nullable = column.isNullable;
-            hdrColumn.columnSize = column.characterMaximumLength;
+            hdrColumn.columnSize = column.characterMaximumLength | column.numericPrecision | column.datetimePrecision;
             hdrColumn.charOctetLength = column.characterOctetLength;
             hdrColumn.typeName = column.dataType;
             hdrColumn.columnKey = column.columnKey;
+            hdrColumn.columnType = column.columnType;
             hdrColumns.push(hdrColumn);
         });
         hdr.table.allColumns = hdrColumns;

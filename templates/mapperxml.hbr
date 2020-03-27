@@ -27,9 +27,9 @@
 		AND a.del_flag = '0'
 		{{~/if~}} 
 		{{#if (and (eq javaTypeShortName "String") (ne columnNameLower "delFlag"))}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
 		{{~else if (ne columnNameLower "delFlag")}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
 		{{~/if~}}
 		{{/with}}
 		{{/each}}
@@ -116,9 +116,9 @@
 			{{#with this}}
 			{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
 			{{#if (eq javaTypeShortName "String")}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
 			{{else}}
-			<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
 			{{/if}}
 			{{/if}}
 			{{/with}}
@@ -181,9 +181,9 @@
 		{{#with this}}
 		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
 		{{#if (eq javaTypeShortName "String")}}
-		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
 		{{else}}
-		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
 		{{/if}}
 		{{/if}}
 		{{/with}}
@@ -198,9 +198,9 @@
 		{{#with this}}
 		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
 		{{#if (eq javaTypeShortName "String")}}
-		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
 		{{else}}
-		<if test="@com.ftrybe.tourismend.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
 		{{/if}}
 		{{/if}}
 		{{/with}}

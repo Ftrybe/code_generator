@@ -77,12 +77,12 @@
         "forceBigDecimals": "",
         "containsView": "",
         "exclude": "",
-        "include": "user"
+        "include": "*"
     },
     "generate" : {
-        "include": "",
+        "include": "domain.hbr,mapperxml.hbr",
         "exclude": "",
-        "filter": false,
+        "filter": true,
         "overwrite": true
     }
 }

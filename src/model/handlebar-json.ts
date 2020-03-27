@@ -84,6 +84,10 @@ export class HandlebarsColumn {
     typeName: string;
     // 列的大小
     columnSize: number;
+
+    // 带长度的sql数据类型
+    columnType: string;
+
     // 基数（通常为 10 或 2）
     numPrecRadix: number;
     // 是否允许使用 NULL
@@ -116,6 +120,7 @@ export class HandlebarsColumn {
     get columnNameUpper(): string {
         return FormatUtils.toUpperCase(this.columnName);
     }
+
     get columnNameLower(): string {
         return FormatUtils.toCamelCase(this.actualColumnName.toLocaleLowerCase());
     }
@@ -126,17 +131,18 @@ export class HandlebarsColumn {
   * 
   */
     get javaTypeShortName(): string {
-        return this.typeName ? DbUtils.convertShortJavaType(this.typeName) : null;
+        return this.typeName ? DbUtils.convertShortJavaType(this.typeName,this.columnSize) : null;
     }
 
     // /**
     //  * 列对应的java类型
     //  *
     get javaTypeName(): string {
-        return this.typeName ? DbUtils.convertJavaType(this.typeName) : null;
+        // console.log( this.typeName + ":" +this.columnSize);
+        return this.typeName ? DbUtils.convertJavaType(this.typeName,this.columnSize) : null;
     }
 
     get jdbcTypeName(): string {
-        return this.typeName.toLocaleUpperCase();
+        return this.typeName? DbUtils.SqlType2JdbcType(this.typeName): null;
     }
 }

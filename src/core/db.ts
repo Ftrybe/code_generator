@@ -43,6 +43,14 @@ export default class DB {
     const excludeList = this.config.table.exclude;
     let includeList: Array<string> = tableConfig.include ? tableConfig.include.split(",") : null;
     const tableSchema = tableConfig.schema;
+    if(tableConfig.include == "*"){
+      let tableNames: string[] = (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
+        tableSchema
+      ]));
+      includeList = tableNames.map( (v:any)=>{
+        return v.TABLE_NAME;
+      });
+    }
     if (excludeList) {
       console.log("当前生成将排除：",excludeList);
       let tableNames: string[] = includeList ? includeList : (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
@@ -61,8 +69,6 @@ export default class DB {
       }).map( (v:any)=>{
         return v.TABLE_NAME;
       });
-
-
     }
     console.log("将生成以下数据库",includeList);
     // includeList

@@ -1,7 +1,7 @@
 export class DbUtils {
     private constructor() { }
 
-    public static convertJavaType(type: string) {
+    public static convertJavaType(type: string, len: number) {
         type = type.toLocaleLowerCase();
         switch (type) {
             case "varchar":
@@ -29,21 +29,33 @@ export class DbUtils {
             case "double":
                 return "java.lang.Double";
             case "decimal":
-                return "java.math.BigDecimal";
+                return len > 19 ? "java.math.BigDecimal" : "java.lang.Long";
             case "date":
             case "year":
+            case "datetime":
                 return "java.sql.Date";
             case "time":
                 return "java.sql.Time";
-            case "datetime":
             case "timestamp":
                 return "java.sql.Timestamp";
         }
     }
 
-    public static convertShortJavaType(type: string) {
-        const javaType = this.convertJavaType(type);
-        const shortName =  javaType.substring(javaType.lastIndexOf(".")+1);
+    public static SqlType2JdbcType(type: string) {
+        type = type.toLocaleUpperCase();
+        switch (type) {
+            case "DATETIME":
+                return "TIMESTAMP";
+            case "INT":
+                return "INTEGER";
+            default:
+                return type;
+        }
+    }
+    public static convertShortJavaType(type: string, len: number) {
+        const javaType = this.convertJavaType(type, len);
+        const shortName = javaType.substring(javaType.lastIndexOf(".") + 1);
         return shortName;
     }
+
 }
