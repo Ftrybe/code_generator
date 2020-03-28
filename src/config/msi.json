@@ -1,23 +1,23 @@
 {
     "mysql": {
-        "user": "zhgd",
-        "password": "zhgd123",
-        "database": "zhgd",
-        "host": "10.0.0.103",
-        "port": 3307
+        "user": "root",
+        "password": "",
+        "database": "staff",
+        "host": "127.0.0.1",
+        "port": 3306
     },
     "project": {
-        "baseTargetJavaDirectory": "D:/IdeaProject/test/atom-portal/atom-portal-web/src/main/java",
-        "baseTargetResourcesDirectory": "D:/IdeaProject/test/atom-portal/atom-portal-web/src/main/resources",
+        "baseTargetJavaDirectory": "D:/workspace/j2ee/staff/src/main/java",
+        "baseTargetResourcesDirectory": "D:/workspace/j2ee/staff/src/main/resources",
         "mapperXmlResourcesDirectory": "mappings/sys",
-        "packageName": "com.silverdata.atom.portal.sys",
-        "javaDirectory": "com/silverdata/atom/portal/sys",
-        "baseEntityPackageName": "com.silverdata.smart.core.persistence",
-        "baseMapperPackageName": "com.silverdata.smart.core.persistence",
-        "baseServicePackageName": "com.silverdata.smart.core.service",
-        "baseServiceImplPackageName": "com.silverdata.smart.core.service",
+        "packageName": "com.ftrybe.staff.sys",
+        "javaDirectory": "com/ftrybe/staff/sys",
+        "baseEntityPackageName": "com.ftrybe.staff.core.persistence",
+        "baseMapperPackageName": "com.ftrybe.staff.core.persistence",
+        "baseServicePackageName": "com.ftrybe.staff.core.service",
+        "baseServiceImplPackageName": "com.ftrybe.staff.core.service",
         "entityPackageName": "{{project.packageName}}.domain",
-        "mapperPackageName": "{{project.packageName}}.mapper",
+        "mapperPackageName": "{{project.packageName}}.dao",
         "servicePackageName": "{{project.packageName}}.service",
         "serviceImplPackageName": "{{project.packageName}}.service.impl",
         "controllerPackageName": "{{project.packageName}}.web.controller"
@@ -37,7 +37,7 @@
             "fileType": "java"
         },
         {
-            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/controller",
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/web/controller",
             "fileNamePrefix": "",
             "fileNameSuffix": "Controller",
             "tplFile": "controller.hbr",
@@ -65,7 +65,7 @@
             "fileType": "java"
         },
         {
-            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}/domain",
+            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}",
             "fileNamePrefix": "",
             "fileNameSuffix": "Mapper",
             "tplFile": "mapperxml.hbr",
@@ -73,10 +73,16 @@
         }
     ],
     "table": {
-        "schema": "zhgd",
+        "schema": "staff",
         "forceBigDecimals": "",
         "containsView": "",
         "exclude": "",
-        "include": "material_dir"
+        "include": "*"
+    },
+    "generate" : {
+        "include": "mapperxml.hbr",
+        "exclude": "",
+        "filter": true,
+        "overwrite": true
     }
 }

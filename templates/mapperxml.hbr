@@ -21,19 +21,16 @@
 	</sql>
 
 	<sql id="dynamicWhere">
-		<where>
-		{{#each table.allColumns}}{{#with this}}
-		{{#if (eq columnNameLower "delFlag")}}
-		AND a.del_flag = '0'
-		{{~/if~}} 
-		{{#if (and (eq javaTypeShortName "String") (ne columnNameLower "delFlag"))}}
+		<where>{{#each table.allColumns}}{{#with this}}
+			{{#if (eq columnNameLower "delFlag")}}AND a.del_flag = '0'{{~else~}}{{~/if~}} 
+			{{#if (and (eq javaTypeShortName "String") (ne columnNameLower "delFlag"))~}}
 			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
-		{{~else if (ne columnNameLower "delFlag")}}
+			{{~else if (ne columnNameLower "delFlag")~}}
 			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
-		{{~/if~}}
-		{{/with}}
-		{{/each}}
-		
+			{{~/if~}}
+			{{/with}}
+			{{/each}} 
+
 		</where>
 	</sql>
 
@@ -73,7 +70,7 @@
 		{{~/each~}})
 		values
 		({{~#each table.allColumns~}}
-		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}},{{/if}}{{/with~}}
+		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
 		{{~/each~}})
 	</insert>
 
@@ -88,7 +85,7 @@
 			)}}
 		{{~#if first}},{{/if}}
 		{{actualColumnName}}=#{
-		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} }{{#if @last}}{{else}},{{/if}}
 		{{~/if}}
 		{{/with}}
 		{{/each}}
@@ -108,7 +105,7 @@
 			{{#each table.baseColumns}}
 			{{#with this}}
 			{{#if (or (eq columnNameLower "updateId") (eq columnNameLower "updateTime"))}}
-			{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName}},
+			{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
 			{{/if}}
 			{{/with}}
 			{{/each}}
@@ -177,34 +174,34 @@
 		{{/each}}
 		del_flag = '1'
 		<where>
-		{{#each table.baseColumns}}
-		{{#with this}}
-		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
-		{{#if (eq javaTypeShortName "String")}}
-		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
-		{{else}}
-		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
-		{{/if}}
-		{{/if}}
-		{{/with}}
-		{{/each}}
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{else}}
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{/if}}
+			{{/if}}
+			{{/with}}
+			{{/each}}
 		</where>
 	</update>
 	{{else}}
 	<delete id="deleteSelective">
 		DELETE FROM {{table.actualTableName}}
 		<where>
-		{{#each table.baseColumns}}
-		{{#with this}}
-		{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
-		{{#if (eq javaTypeShortName "String")}}
-		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
-		{{else}}
-		<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
-		{{/if}}
-		{{/if}}
-		{{/with}}
-		{{/each}}
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (and (ne columnNameLower "createId") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateId") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{else}}
+			<if test="@com.ftrybe.staff.core.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{/if}}
+			{{/if}}
+			{{/with}}
+			{{/each}}
 		</where>
 	</delete>
 	{{/if}}

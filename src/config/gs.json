@@ -17,7 +17,7 @@
         "baseServicePackageName": "com.ftrybe.staff.core.service",
         "baseServiceImplPackageName": "com.ftrybe.staff.core.service",
         "entityPackageName": "{{project.packageName}}.domain",
-        "mapperPackageName": "{{project.packageName}}.mapper",
+        "mapperPackageName": "{{project.packageName}}.dao",
         "servicePackageName": "{{project.packageName}}.service",
         "serviceImplPackageName": "{{project.packageName}}.service.impl",
         "controllerPackageName": "{{project.packageName}}.web.controller"
