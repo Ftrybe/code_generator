@@ -34,7 +34,7 @@ export class HandlebarsTable {
         return  FormatUtils.toLocaleCase(Inflected.pluralize(this.tableName));
     }
     get tableNameSelectivePluralize(): string {
-        return  FormatUtils.toLocaleCase(Inflected.pluralize(this.tableNameLower + this.tableName));
+        return  FormatUtils.toLocaleCase(Inflected.pluralize(this.tableName + "Selective"));
     }
     get permissions(): string {
         return this.actualTableName.substring(0, this.actualTableName.indexOf("_")).toLowerCase() + ":" + this.actualTableName.substring(this.actualTableName.indexOf("_") + 1).toLowerCase();
