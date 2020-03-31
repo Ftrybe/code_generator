@@ -65,7 +65,7 @@
             "fileType": "java"
         },
         {
-            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}/domain",
+            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}",
             "fileNamePrefix": "",
             "fileNameSuffix": "Mapper",
             "tplFile": "mapperxml.hbr",
@@ -76,13 +76,13 @@
         "schema": "staff",
         "forceBigDecimals": "",
         "containsView": "",
-        "exclude": "user,authority",
-        "include": ""
+        "exclude": "",
+        "include": "equipment_department"
     },
     "generate" : {
-        "include": "domain.hbr,domaindto.hbr",
+        "include": "domain.hbr,domaindto.hbr,mapperxml.hbr",
         "exclude": "",
-        "filter": true,
+        "filter": false,
         "overwrite": true
     }
 }

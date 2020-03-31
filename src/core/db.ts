@@ -42,37 +42,56 @@ export default class DB {
     const tableConfig = this.config.table;
     const excludeList = this.config.table.exclude;
     let includeList: Array<string> = tableConfig.include ? tableConfig.include.split(",") : null;
+
     const tableSchema = tableConfig.schema;
-    if(tableConfig.include == "*"){
-      let tableNames: string[] = (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
-        tableSchema
-      ]));
-      includeList = tableNames.map( (v:any)=>{
+
+    const allTablesName: string[] = await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
+      tableSchema
+    ]);
+    if (tableConfig.include == "*") {
+      includeList = allTablesName.map((v: any) => {
         return v.TABLE_NAME;
       });
     }
+
     if (excludeList) {
-      console.log("当前生成将排除：",excludeList);
-      let tableNames: string[] = includeList ? includeList : (await this.query("select TABLE_NAME from INFORMATION_SCHEMA.TABLES where table_schema = ?", [
-        tableSchema
-      ]));
-    
-      includeList = tableNames.filter((table:any) => {
-        // excludeList = "user_authority,user"
+      console.log("当前生成将排除：", excludeList);
+
+      let tableNames: string[] = includeList ? includeList : allTablesName;
+
+      includeList = tableNames.filter((table: any) => {
         const tableName = table.TABLE_NAME;
         let flag = true;
-        excludeList.split(",").forEach(val=>{
-          if(val == tableName){
-           flag = false;
+        excludeList.split(",").forEach(val => {
+          if (val == tableName) {
+            flag = false;
           }
         });
-
-       return flag;
-      }).map( (v:any)=>{
+        return flag;
+      }).map((v: any) => {
         return v.TABLE_NAME;
       });
     }
-    console.log("将生成以下数据库",includeList);
+
+    includeList =  includeList.filter(iTableName => {
+      let flag = false;
+      allTablesName.forEach((table: any) => {
+        const tableName = table.TABLE_NAME;
+        if (iTableName == tableName) {
+          flag = true;
+          return;
+        }
+
+      })
+      flag ? "" : console.error(iTableName + "不存在");
+      return flag;
+    })
+
+    console.log("将生成以下数据库", includeList);
+    if(includeList.length < 1){
+      console.error("没有要生成的数据库，请检查配置");
+      return null;
+    }
     // includeList
     const table = await this.query("select * from INFORMATION_SCHEMA.TABLES where table_name in (?) and table_schema = ?", [
       includeList, tableSchema

@@ -19,22 +19,24 @@ export class Generator {
     public async generate() {
         const db = new DB(this.config);
         const tables = await db.getDBData();
-        tables.forEach(async table => {
-            const hdrData = await this.generateHdr(table);
-            this.config.templates.map(async tpl => {
-                const template = await this.readTemplate(tpl.tplFile);
-                const render = Handlebars.compile(template);
-                const handlebarFile = render(hdrData);
-                if(this.config.generate.filter){
-                    if (this.config.generate.include?.includes(tpl.tplFile) && !this.config.generate.exclude?.includes(tpl.tplFile)) {
+        if(tables){
+            tables.forEach(async table => {
+                const hdrData = await this.generateHdr(table);
+                this.config.templates.map(async tpl => {
+                    const template = await this.readTemplate(tpl.tplFile);
+                    const render = Handlebars.compile(template);
+                    const handlebarFile = render(hdrData);
+                    if(this.config.generate.filter){
+                        if (this.config.generate.include?.includes(tpl.tplFile) && !this.config.generate.exclude?.includes(tpl.tplFile)) {
+                            await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
+                        }
+                    }else{
                         await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
                     }
-                }else{
-                    await this.generateFile(tpl, handlebarFile, hdrData.table.tableName);
-                }
-            });
-        })
-        this.handlebarHelper();
+                });
+            })
+            this.handlebarHelper();
+        }
     }
 
     private async generateFile(tpl: Template, data: string, tableName: string) {
