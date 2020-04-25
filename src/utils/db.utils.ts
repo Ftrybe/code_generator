@@ -33,7 +33,7 @@ export class DbUtils {
             case "date":
             case "year":
             case "datetime":
-                return "java.sql.Date";
+                return "java.util.Date";
             case "time":
                 return "java.sql.Time";
             case "timestamp":
