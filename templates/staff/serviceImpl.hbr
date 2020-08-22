@@ -1,0 +1,13 @@
+package {{prop.serviceImplPackageName}};
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import java.util.List;
+import {{prop.entityPackageName}}.{{table.tableName}};
+import {{prop.mapperPackageName}}.{{table.tableName}}Mapper;
+import {{prop.servicePackageName}}.{{table.tableName}}Service;
+import {{prop.baseServiceImplPackageName}}.BaseServiceImpl;
+
+@Service("{{table.tableNameLower}}Service")
+public class {{table.tableName}}ServiceImpl extends BaseServiceImpl<{{table.tableName}}Mapper,{{table.tableName}}> implements {{table.tableName}}Service {
+}

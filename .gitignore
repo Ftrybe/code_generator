@@ -4,3 +4,5 @@ www/
 npm-debug.log
 yarn-error.log
 build
+
+src/config/qgzx.json

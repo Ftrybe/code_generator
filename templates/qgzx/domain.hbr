@@ -1,0 +1,60 @@
+package {{prop.entityPackageName}};
+{{#each table.importList}}
+import {{this}};
+{{/each}}
+import {{prop.baseEntityPackageName}}.BaseEntity;
+import com.qgzx.framework.web.validator.groups.DefaultGroup;
+import com.qgzx.framework.aspectj.lang.annotation.Excel;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+/**
+ *{{table.actualTableName}}
+ *{{table.remarks}}
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ApiModel(value = "{{table.remarks}}",description = "{{table.remarks}}")
+public class {{table.tableName}} extends BaseEntity{
+    {{#each table.allColumns}}
+    {{#with this}}
+        {{#if (and
+         (ne columnNameLower "id")
+         (ne columnNameLower "createBy")
+         (ne columnNameLower "createTime")
+         (ne columnNameLower "updateBy")
+         (ne columnNameLower "updateTime")
+         (ne columnNameLower "deptKey")
+         (ne columnNameLower "areaKey")
+         (ne columnNameLower "delFlag")
+         )
+        }}
+    /**
+    *{{remarks}}
+    */
+    @ApiModelProperty(value = "{{remarks}}，{{#if columnSize}}最大长度不能超过：{{columnSize}}个字符{{/if}} {{#if (eq isNullable "NO")}}，不可为空。{{/if}}",position = {{inc @index}})
+    {{#if (eq nullable "NO")}}
+        {{#if (eq javaTypeShortName "String")}}
+    @NotBlank(groups = {DefaultGroup.class})
+        {{else}}
+    @NotNull(groups = {DefaultGroup.class})
+        {{/if}}
+    {{/if}}
+    {{#if (eq javaTypeShortName "String")}}
+    @Size(max = {{columnSize}}, groups = {DefaultGroup.class})
+    {{/if}}
+    @Excel(name = "{{remarks}}")
+    private {{javaTypeShortName}} {{columnNameLower}};
+
+	{{/if}}
+    {{/with}}
+	{{/each}}
+}

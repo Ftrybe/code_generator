@@ -1,0 +1,88 @@
+{
+    "mysql": {
+        "user": "root",
+        "password": "admin",
+        "database": "staff",
+        "host": "127.0.0.1",
+        "port": 3306
+    },
+    "project": {
+        "baseTargetJavaDirectory": "~/Documents/workspace/java/tourism-serve/src/main/java",
+        "baseTargetResourcesDirectory": "~/Documents/workspace/java/tourism-serve/src/main/resources",
+        "mapperXmlResourcesDirectory": "mappings/sys",
+        "packageName": "com.ftrybe.tourism.sys",
+        "javaDirectory": "com/ftrybe/tourism/sys",
+        "baseEntityPackageName": "com.ftrybe.tourism.core.persistence",
+        "baseMapperPackageName": "com.ftrybe.tourism.core.persistence",
+        "baseServicePackageName": "com.ftrybe.tourism.core.service",
+        "baseServiceImplPackageName": "com.ftrybe.tourism.core.service",
+        "entityPackageName": "{{project.packageName}}.domain",
+        "mapperPackageName": "{{project.packageName}}.dao",
+        "servicePackageName": "{{project.packageName}}.service",
+        "serviceImplPackageName": "{{project.packageName}}.service.impl",
+        "controllerPackageName": "{{project.packageName}}.web.controller"
+    },
+    "templates": [{
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/domain",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "",
+            "tplFile": "domain.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/domain",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "DTO",
+            "tplFile": "domaindto.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/web/controller",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Controller",
+            "tplFile": "controller.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/service",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Service",
+            "tplFile": "service.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/service/impl",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "ServiceImpl",
+            "tplFile": "serviceimpl.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetJavaDirectory}}/{{project.javaDirectory}}/dao",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Mapper",
+            "tplFile": "mapper.hbr",
+            "fileType": "java"
+        },
+        {
+            "targetDirectory": "{{project.baseTargetResourcesDirectory}}/{{project.mapperXmlResourcesDirectory}}",
+            "fileNamePrefix": "",
+            "fileNameSuffix": "Mapper",
+            "tplFile": "mapperxml.hbr",
+            "fileType": "xml"
+        }
+    ],
+    "table": {
+        "schema": "tourism",
+        "forceBigDecimals": "",
+        "containsView": "",
+        "exclude": "",
+        "include": ""
+    },
+    "generate" : {
+        "include": "",
+        "exclude": "",
+        "filter": false,
+        "overwrite": true
+    }
+}

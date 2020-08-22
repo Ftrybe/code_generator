@@ -1,0 +1,40 @@
+package {{prop.entityPackageName}};
+{{#each table.importList}}
+import {{this}};
+{{/each}}
+import {{prop.baseEntityPackageName}}.BaseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ *{{table.actualTableName}}
+ *{{table.remarks}}[DTO]
+ */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class {{table.tableName}}DTO extends BaseEntity{
+	 {{!-- 字段  --}}
+  {{#each table.allColumns}}
+    {{#with this}}
+        {{#if (and
+         (ne columnNameLower "id")
+         (ne columnNameLower "createId")
+         (ne columnNameLower "createTime")
+         (ne columnNameLower "updateId")
+         (ne columnNameLower "updateTime")
+         (ne columnNameLower "deptKey")
+         (ne columnNameLower "areaKey")
+         (ne columnNameLower "delFlag")
+         )
+        }}
+    /**
+    *{{remarks}}
+    */
+    private {{javaTypeShortName}} {{columnNameLower}};
+
+	    {{/if}}
+    {{/with}}
+	{{/each}}
+}

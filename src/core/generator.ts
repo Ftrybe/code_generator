@@ -89,7 +89,7 @@ export class Generator {
         // 包名,目录等配置
         hdr.prop = this.config.project;
         // 字段注视解析
-        hdr.table.tableName = Inflected.classify(table.tableName);
+        hdr.table.tableName = Inflected.camelize(table.tableName);
         hdr.table.actualTableName = table.tableName;
         hdr.table.schema = table.tableSchema;
         hdr.table.catalog = table.tableCatalog;
@@ -143,10 +143,11 @@ export class Generator {
                 return parseInt(v1) + 1;
             },
             seq_contains: function (v1: Array<string>, v2: string) {
-                v1.forEach(val => {
-                    if (val == v2)
+                for( var val of v1){
+                    if (val == v2){
                         return true;
-                })
+                    }
+                }
                 return false;
             }
         });

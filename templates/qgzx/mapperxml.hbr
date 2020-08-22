@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="{{prop.mapperPackageName}}.{{table.tableName}}Mapper">
+	<resultMap id="baseResultMap" type="{{prop.entityPackageName}}.{{table.tableName}}">
+		{{!-- 主键字段 --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		<id column="{{actualColumnName}}" property="{{columnNameLower}}" jdbcType="{{jdbcTypeName}}" />
+		{{/with}}
+		{{/each}}
+		{{!-- 非主键列，非blob列 --}}
+		{{#each table.baseColumns}}
+		{{#with this}}
+		<result column="{{actualColumnName}}" property="{{columnNameLower}}" jdbcType="{{jdbcTypeName}}" />
+		{{/with}}
+		{{/each}}
+	</resultMap>
+
+	<sql id="baseColumnList">
+		{{#each table.allColumns}} {{#with this}}a.{{actualColumnName}}{{#if @last}}{{else}},{{~/if~}}{{/with~}} {{/each}}
+	</sql>
+
+	<sql id="dynamicWhere">
+		<where>{{#each table.allColumns}}{{#with this}}
+			{{#if (eq columnNameLower "delFlag")}}AND a.del_flag = '0'{{~else~}}{{~/if~}} 
+			{{#if (and (eq javaTypeShortName "String") (ne columnNameLower "delFlag"))~}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
+			{{~else if (ne columnNameLower "delFlag")~}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND a.{{actualColumnName}}=#{ {{~columnNameLower~}} }</if>
+			{{~/if~}}
+			{{/with}}
+			{{/each}} 
+
+		</where>
+	</sql>
+
+	<select id="get" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM {{table.actualTableName}} a
+		WHERE
+		{{!-- 主键字段 --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq @index "0")}} AND {{/if}}a.{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{/with}}
+		{{/each}}
+		{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+		AND a.del_flag = '0'
+		{{/if}}
+	</select>
+
+	<select id="getByDynamicWhere" parameterType="{{prop.entityPackageName}}.{{table.tableName}}" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM {{table.actualTableName}} a
+		<include refid="dynamicWhere" />
+	</select>
+
+	<select id="getByCustomWhere" parameterType="java.lang.String" resultMap="baseResultMap">
+		select
+		<include refid="baseColumnList" />
+		FROM {{table.actualTableName}} a
+		#{strWhere}
+	</select>
+
+	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}" useGeneratedKeys="true" keyProperty="id">
+		insert into {{table.actualTableName~}}({{~#each table.allColumns ~}}
+		{{~#with this}}{{#if (ne actualColumnName "id")}}{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
+		{{~/each~}})
+		values
+		({{~#each table.allColumns~}}
+		{{#with this}}{{#if (ne actualColumnName "id")}}#{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/if}}{{/with~}}
+		{{~/each~}})
+	</insert>
+
+	<update id="update" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}} SET
+		{{~#each table.baseColumns}}
+		{{#with this}}
+		{{#if (and 
+					(ne columnNameLower "createBy")
+					(ne columnNameLower "createTime")
+					(ne columnNameLower "delFlag")
+			)}}
+		{{~#if first}},{{/if}}
+		{{actualColumnName}}=#{
+		{{~columnNameLower}},jdbcType={{jdbcTypeName~}} }{{#if @last}}{{else}},{{/if}}
+		{{~/if}}
+		{{/with}}
+		{{/each}}
+
+		WHERE
+		{{!-- 主键字段 --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (ne @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }{{#if @last}}{{else}},{{/if}}
+		{{/with}}
+		{{/each}}
+	</update>
+
+	<update id="updateSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}}
+		<set>
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (or (eq columnNameLower "updateBy") (eq columnNameLower "updateTime"))}}
+			{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+			{{/if}}
+			{{/with}}
+			{{/each}}
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (and (ne columnNameLower "createBy") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateBy") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotBlank({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			{{else}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotEmpty({{columnNameLower}})">{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },</if>
+			{{/if}}
+			{{/if}}
+			{{/with}}
+			{{/each}}
+		</set>
+		WHERE
+		{{!-- 主键字段 --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (ne @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}}
+		}{{#if @last}}{{else}},{{/if}}
+		{{/with}}
+		{{/each}}
+	</update>
+	{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+	<update id="delete" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}} SET
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (or (eq columnNameLower "updateBy") (eq columnNameLower "updateTime"))}}
+		{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		del_flag = '1'
+		WHERE
+		{{!-- <#-- 主键字段--> --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{/with}}
+		{{/each}}
+	</update>
+	{{else}}
+	<delete id="delete">
+		DELETE FROM {{table.actualTableName}}
+		WHERE
+		{{!-- <#-- 主键字段--> --}}
+		{{#each table.primaryKeyColumns}}
+		{{#with this}}
+		{{#if (eq @index "0")}} AND {{/if}}{{actualColumnName}}=#{ {{~columnNameLower~}} }
+		{{/with}}
+		{{/each}}
+	</delete>
+	{{/if}}
+
+	{{#if (seq_contains table.allColumnNameLowers "delFlag")}}
+	<update id="deleteSelective" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
+		UPDATE {{table.actualTableName}} SET
+		{{#each table.baseColumns}}
+		{{#with this}}
+		{{#if (or (eq columnNameLower "updateBy") (eq columnNameLower "updateTime"))}}
+		{{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} },
+		{{/if}}
+		{{/with}}
+		{{/each}}
+		del_flag = '1'
+		<where>
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (and (ne columnNameLower "createBy") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateBy") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{else}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{/if}}
+			{{/if}}
+			{{/with}}
+			{{/each}}
+		</where>
+	</update>
+	{{else}}
+	<delete id="deleteSelective">
+		DELETE FROM {{table.actualTableName}}
+		<where>
+			{{#each table.baseColumns}}
+			{{#with this}}
+			{{#if (and (ne columnNameLower "createBy") (ne columnNameLower "createTime") (ne columnNameLower "delFlag") (ne columnNameLower "updateBy") (ne columnNameLower "updateTime"))}}
+			{{#if (eq javaTypeShortName "String")}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotBlank({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{else}}
+			<if test="@com.qgzx.framework.persistence.Ognl@isNotEmpty({{columnNameLower}})"> AND {{actualColumnName}}=#{ {{~columnNameLower}},jdbcType={{jdbcTypeName~}} }</if>
+			{{/if}}
+			{{/if}}
+			{{/with}}
+			{{/each}}
+		</where>
+	</delete>
+	{{/if}}
+</mapper>

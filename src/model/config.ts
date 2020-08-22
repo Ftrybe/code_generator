@@ -47,14 +47,22 @@ export class ProjectConfig {
 }
 export class TableConfig {
     schema: string;
+     // 数值类型是否强制转为BigDecimal
     forceBigDecimals: string;
+    // 是否包含数据库的视图
     containsView: string;
+    // 排除表名（当设置了include时，讲排除include中的表）
     exclude: string;
+    // 包含表名
     include: string;
 }
 export class GenerateConfig{
+    // 需要生产的模版文件
     include: string;
+    // 排除模版文件
     exclude: string;
+    // 是否开启过滤（设置true，才可以使用include和exclude属性）
     filter: boolean;
+    // 是否覆盖已有文件
     overwrite: boolean;
 }

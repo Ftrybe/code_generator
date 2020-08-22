@@ -7,11 +7,21 @@ export class DbUtils {
             case "varchar":
             case "char":
             case "text":
+            case "tinytext":
+            case "mediumext":
+            case "longtext":
+            case "enum":
+            case "set":
                 return "java.lang.String";
             case "blob":
+            case "binary":
+            case "varbinry":
+            case "binblob":
+            case "longlog":
                 return "java.lang.byte[]";
-            case "integer":
             case "int":
+                return len < 11 ? "java.lang.Integer" : "java.lang.Long";
+            case "integer":
             case "id":
                 return "java.lang.Long";
             case "tinyint":
@@ -21,9 +31,13 @@ export class DbUtils {
             case "mediumint":
                 return "java.lang.Integer";
             case "bit":
-                return "Boolean";
+                if(len = 1){
+                    return "Boolean";
+                }
+                return "java.lang.byte[]";
             case "bigint":
-                return "java.math.BigInteger";
+                return "java.lang.Long";
+                // return "java.math.BigInteger";
             case "float":
                 return "java.lang.Float";
             case "double":
@@ -47,7 +61,19 @@ export class DbUtils {
             case "DATETIME":
                 return "TIMESTAMP";
             case "INT":
+            case "INTEGER":
                 return "INTEGER";
+            case "BOOL":
+            case "BOOLEAN":
+                return "TINYINT";
+            case "TINYTEXT":
+            case "TEXT":
+            case "MEDIUMTEXT":
+            case "LONGTEXT":
+                return "VARCHAR";
+            case "ENUM":
+            case "SET":
+                return "CHAR";
             default:
                 return type;
         }

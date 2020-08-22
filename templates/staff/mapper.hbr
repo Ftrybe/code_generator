@@ -1,0 +1,9 @@
+package {{prop.mapperPackageName}};
+
+import {{prop.baseMapperPackageName}}.BaseMapper;
+import {{prop.entityPackageName}}.{{table.tableName}};
+
+
+public interface {{table.tableName}}Mapper extends BaseMapper<{{table.tableName}}> {
+	
+}
