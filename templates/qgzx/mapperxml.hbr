@@ -61,19 +61,19 @@
 		select
 		<include refid="baseColumnList" />
 		FROM {{table.actualTableName}} a
-		#{strWhere}
+		${strWhere}
 	</select>
 
-	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}" useGeneratedKeys="true" keyProperty="id">
+	<insert id="save" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
 		insert into {{table.actualTableName~}}({{~#each table.allColumns ~}}
-		{{~#with this}}{{#if (ne actualColumnName "id")}}{{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
+		{{~#with this}} {{actualColumnName}}{{#if @last}}{{else}},{{/if}}{{/with~}}
 		{{~/each~}})
 		values
 		({{~#each table.allColumns~}}
-		{{#with this}}{{#if (ne actualColumnName "id")}}#{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/if}}{{/with~}}
+		{{#with this}} #{ {{~columnNameLower~}},jdbcType={{jdbcTypeName~}} }{{#if columnNameLower}}{{#if @last}}{{else}},{{/if}}{{/if}}{{/with~}}
 		{{~/each~}})
 	</insert>
-
+	
 	<update id="update" parameterType="{{prop.entityPackageName}}.{{table.tableName}}">
 		UPDATE {{table.actualTableName}} SET
 		{{~#each table.baseColumns}}
